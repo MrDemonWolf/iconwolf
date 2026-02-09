@@ -1,6 +1,6 @@
 # iconwolf
 
-Cross-platform app icon generator CLI for Expo/React Native projects.
+Cross-platform app icon generator CLI for Expo/React Native projects. Primary input format is Apple Icon Composer `.icon` folders; also accepts plain PNG files.
 
 ## Tech Stack
 
@@ -18,9 +18,10 @@ Cross-platform app icon generator CLI for Expo/React Native projects.
 ```
 src/
   index.ts          # CLI entry point (Commander setup, #!/usr/bin/env node)
-  generator.ts      # Orchestrator: validates input, dispatches to variant generators
+  generator.ts      # Orchestrator: detects .icon vs PNG, dispatches to variant generators
   types.ts          # Shared interfaces (VariantFlags, GeneratorOptions, GenerationResult)
   utils/
+    icon-composer.ts # Apple Icon Composer .icon folder parser and renderer
     image.ts        # Sharp operations (resize, adaptive foreground, solid bg, monochrome, hex parsing)
     paths.ts        # Output file name constants, resolveOutputPath(), DEFAULT_OUTPUT_DIR
     logger.ts       # Chalk-based console output (banner, info, success, warn, error, summary)
@@ -31,11 +32,15 @@ src/
     android.ts      # android-icon-{foreground,background,monochrome}.png (1024x1024)
 tests/
   helpers.ts        # Test utilities (createTestPng, createTmpDir, cleanDir)
-  generator.test.ts # Integration tests for the orchestrator
-  utils/            # Unit tests for image.ts and paths.ts
+  generator.test.ts # Integration tests for the orchestrator (including .icon folder input)
+  utils/            # Unit tests for image.ts, paths.ts, and icon-composer.ts
   variants/         # Unit tests for each variant generator
 Formula/
   iconwolf.rb       # Homebrew formula (update sha256 + url on release)
+.github/workflows/
+  test.yml          # CI: runs tests on push to main and PRs
+  build-binary.yml  # CI: builds release tarball on GitHub release
+  update-homebrew.yml # CI: updates homebrew-den tap formula after build
 ```
 
 ## Commands
@@ -49,6 +54,7 @@ Formula/
 
 ## Key Architecture Notes
 
+- **Apple Icon Composer support**: `.icon` folders are the primary input. The `icon-composer.ts` module reads `icon.json`, renders gradient/solid backgrounds via SVG, composites foreground layers with scale and translation, and outputs a 1024x1024 composed PNG. Background color is auto-extracted for Android adaptive icons.
 - All variant generators return `GenerationResult` with file path, dimensions, and size in bytes.
 - Android adaptive icons use the 66/108 safe zone ratio (626px in 1024px canvas, 199px margin).
 - When no variant flags are set, the generator produces all 6 output files.

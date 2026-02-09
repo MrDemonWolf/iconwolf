@@ -20,13 +20,31 @@ class Iconwolf < Formula
 
   def caveats
     <<~EOS
-      iconwolf generates icon files into a directory you specify (default: ./assets/images/).
-      Those output files are your project assets and are NOT managed by Homebrew.
+      Usage:
+        iconwolf <input> [options]
 
-      To fully remove iconwolf:
-        brew uninstall iconwolf
+      Input:
+        Path to an Apple Icon Composer .icon folder or a source PNG.
+        .icon folders are the primary input format (from Apple's Icon Composer app).
 
-      This removes the CLI binary. No other cleanup needed.
+      Options:
+        -o, --output <dir>     Output directory (default: ./assets/images/)
+        --android              Generate Android adaptive icon variants only
+        --favicon              Generate web favicon only
+        --splash               Generate splash screen icon only
+        --icon                 Generate standard icon.png only
+        --bg-color <hex>       Background color for Android adaptive icon (default: #FFFFFF)
+        -h, --help             Display help
+        -V, --version          Display version
+
+      Examples:
+        iconwolf AppIcon.icon                              # Generate all variants from .icon
+        iconwolf AppIcon.icon --android                    # Android icons only
+        iconwolf app-icon.png -o ./assets/icons            # Custom output directory
+        iconwolf AppIcon.icon --bg-color "#1A1A2E"         # Custom Android bg color
+
+      Output files are your project assets and are NOT managed by Homebrew.
+      To uninstall: brew uninstall iconwolf
     EOS
   end
 

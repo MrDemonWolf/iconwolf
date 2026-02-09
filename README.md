@@ -1,15 +1,18 @@
 # iconwolf - Cross-platform app icon generator for Expo/React Native
 
-A CLI tool that takes a single iOS app compositor icon and
-generates all necessary icon variants for cross-platform use.
-Built for React Native and Expo projects, iconwolf produces
-Android adaptive icons, web favicons, splash screen icons,
-and standard app icons -- all from one source image.
+A CLI tool that takes an Apple Icon Composer `.icon` folder
+(or a plain PNG) and generates all necessary icon variants for
+cross-platform use. Built for React Native and Expo projects,
+iconwolf produces Android adaptive icons, web favicons, splash
+screen icons, and standard app icons -- all from one source.
 
 One icon to rule them all.
 
 ## Features
 
+- **Apple Icon Composer Support** - First-class support for
+  `.icon` folders from [Apple's Icon Composer](https://developer.apple.com/icon-composer/).
+  Renders gradient backgrounds, layers, and positioning automatically.
 - **Android Adaptive Icons** - Generates foreground, background,
   and monochrome variants using the 66/108 safe zone ratio.
 - **Web Favicon** - Produces a 48x48 favicon ready for the web.
@@ -17,16 +20,20 @@ One icon to rule them all.
 - **Standard App Icon** - Outputs a universal 1024x1024 icon.
 - **Expo Drop-in Ready** - Defaults to `./assets/images/` to
   match Expo project conventions out of the box.
+- **Auto Background Color** - When using `.icon` input, the
+  background gradient color is automatically extracted for Android
+  adaptive icons.
 - **Selective Generation** - Use CLI flags to generate only the
   variants you need.
-- **Custom Background Color** - Configure the Android adaptive
+- **Custom Background Color** - Override the Android adaptive
   icon background color via `--bg-color`.
 
 ## Getting Started
 
-1. Install iconwolf via Homebrew or npm (see below).
-2. Run `iconwolf <your-icon.png>` in your project directory.
-3. All icon variants land in `./assets/images/` by default.
+1. Design your icon in [Apple Icon Composer](https://developer.apple.com/icon-composer/).
+2. Install iconwolf via Homebrew or npm (see below).
+3. Run `iconwolf AppIcon.icon` in your project directory.
+4. All icon variants land in `./assets/images/` by default.
 
 ### Install via Homebrew
 
@@ -55,9 +62,9 @@ iconwolf <input> [options]
 
 ### Arguments
 
-| Argument | Description                                  |
-| -------- | -------------------------------------------- |
-| `input`  | Path to the source iOS compositor icon (PNG) |
+| Argument | Description                                                        |
+| -------- | ------------------------------------------------------------------ |
+| `input`  | Path to an Apple Icon Composer `.icon` folder or a source PNG file |
 
 ### Options
 
@@ -75,20 +82,23 @@ iconwolf <input> [options]
 ### Examples
 
 ```bash
-# Generate all variants with Expo convention paths
+# Generate all variants from an Apple Icon Composer file
+iconwolf AppIcon.icon
+
+# Generate all variants from a plain PNG
 iconwolf app-icon.png
 
 # Generate only Android adaptive icons
-iconwolf app-icon.png --android
+iconwolf AppIcon.icon --android
 
 # Generate favicon and splash icon to a custom directory
-iconwolf app-icon.png --favicon --splash --output ./assets/icons
+iconwolf AppIcon.icon --favicon --splash --output ./assets/icons
 
 # Generate only the standard icon
-iconwolf app-icon.png --icon
+iconwolf AppIcon.icon --icon
 
-# Use a custom background color for Android icons
-iconwolf app-icon.png --android --bg-color "#1A1A2E"
+# Override the Android adaptive icon background color
+iconwolf AppIcon.icon --android --bg-color "#1A1A2E"
 ```
 
 ### Output Files
@@ -174,6 +184,7 @@ iconwolf/
 │   │   ├── splash.ts       # Splash screen icon generation
 │   │   └── standard.ts     # Standard icon generation
 │   └── utils/
+│       ├── icon-composer.ts # Apple Icon Composer .icon parser
 │       ├── image.ts        # Sharp image processing helpers
 │       ├── paths.ts        # Output path resolution
 │       └── logger.ts       # Console output formatting
@@ -182,7 +193,7 @@ iconwolf/
 │   └── build-release.sh    # Release build script
 ├── Formula/
 │   └── iconwolf.rb         # Homebrew formula
-├── .github/workflows/      # CI: build binary + update Homebrew tap
+├── .github/workflows/      # CI: tests, build binary, update Homebrew tap
 ├── package.json
 ├── tsconfig.json
 └── README.md
