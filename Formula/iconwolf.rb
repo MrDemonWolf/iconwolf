@@ -28,17 +28,21 @@ class Iconwolf < Formula
         .icon folders are the primary input format (from Apple's Icon Composer app).
 
       Options:
-        -o, --output <dir>     Output directory (default: ./assets/images/)
+        -o, --output <dir>     Output directory (auto-detects src/ projects)
         --android              Generate Android adaptive icon variants only
-        --favicon              Generate web favicon only
+        --favicon              Generate web favicon with rounded corners (opt-in)
         --splash               Generate splash screen icon only
         --icon                 Generate standard icon.png only
         --bg-color <hex>       Background color for Android adaptive icon (default: #FFFFFF)
         -h, --help             Display help
         -V, --version          Display version
 
+      Default output (5 files): icon.png, android-icon-{foreground,background,monochrome}.png, splash-icon.png
+      Favicon is opt-in only (use --favicon to include it).
+
       Examples:
-        iconwolf AppIcon.icon                              # Generate all variants from .icon
+        iconwolf AppIcon.icon                              # Generate 5 default variants
+        iconwolf AppIcon.icon --favicon                    # Include rounded favicon
         iconwolf AppIcon.icon --android                    # Android icons only
         iconwolf app-icon.png -o ./assets/icons            # Custom output directory
         iconwolf AppIcon.icon --bg-color "#1A1A2E"         # Custom Android bg color

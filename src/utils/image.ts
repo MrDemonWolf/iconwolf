@@ -145,6 +145,26 @@ export async function createMonochromeIcon(
   };
 }
 
+/**
+ * Apply rounded corners to an image using an SVG mask.
+ * Uses Apple's icon corner radius ratio (~22.37%).
+ */
+export async function applyRoundedCorners(
+  inputBuffer: Buffer,
+  size: number,
+): Promise<Buffer> {
+  const radius = Math.round(size * 0.2237);
+  const mask = Buffer.from(
+    `<svg width="${size}" height="${size}"><rect x="0" y="0" width="${size}" height="${size}" rx="${radius}" ry="${radius}" fill="white"/></svg>`,
+  );
+
+  return sharp(inputBuffer)
+    .resize(size, size)
+    .composite([{ input: mask, blend: 'dest-in' }])
+    .png()
+    .toBuffer();
+}
+
 export function parseHexColor(hex: string): { r: number; g: number; b: number } {
   const cleaned = hex.replace(/^#/, '');
 

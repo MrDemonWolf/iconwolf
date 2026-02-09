@@ -73,7 +73,7 @@ export async function generate(options: GeneratorOptions): Promise<void> {
       }
     }
 
-    if (generateAll || variants.favicon) {
+    if (variants.favicon) {
       const result = await generateFavicon(inputPath, outputDir);
       results.push(result);
       logger.generated(result);

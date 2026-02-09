@@ -1,10 +1,24 @@
+import fs from 'node:fs';
 import path from 'node:path';
-import { describe, it, expect } from 'vitest';
-import { resolveOutputPath, OUTPUT_FILES, DEFAULT_OUTPUT_DIR } from '../../src/utils/paths.js';
+import { describe, it, expect, vi } from 'vitest';
+import { resolveOutputPath, OUTPUT_FILES, DEFAULT_OUTPUT_DIR, resolveDefaultOutputDir } from '../../src/utils/paths.js';
 
 describe('paths', () => {
   it('DEFAULT_OUTPUT_DIR is ./assets/images', () => {
     expect(DEFAULT_OUTPUT_DIR).toBe('./assets/images');
+  });
+
+  it('resolveDefaultOutputDir returns src/assets/images when src/ exists', () => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'statSync').mockReturnValue({ isDirectory: () => true } as fs.Stats);
+    expect(resolveDefaultOutputDir()).toBe('./src/assets/images');
+    vi.restoreAllMocks();
+  });
+
+  it('resolveDefaultOutputDir returns assets/images when no src/', () => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(false);
+    expect(resolveDefaultOutputDir()).toBe('./assets/images');
+    vi.restoreAllMocks();
   });
 
   it('OUTPUT_FILES contains all expected file names', () => {

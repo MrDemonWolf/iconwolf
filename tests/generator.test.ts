@@ -59,7 +59,7 @@ afterAll(() => {
 });
 
 describe('generate', () => {
-  it('generates all 6 files when no flags set', async () => {
+  it('generates 5 default files when no flags set (favicon excluded)', async () => {
     const outDir = path.join(tmpDir, 'all');
 
     await generate({
@@ -69,10 +69,12 @@ describe('generate', () => {
       bgColor: '#FFFFFF',
     });
 
-    const allFiles = Object.values(OUTPUT_FILES);
-    for (const file of allFiles) {
-      expect(fs.existsSync(path.join(outDir, file))).toBe(true);
-    }
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.icon))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidForeground))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidBackground))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidMonochrome))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.splashIcon))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.favicon))).toBe(false);
   });
 
   it('generates only icon when --icon flag set', async () => {
@@ -121,7 +123,7 @@ describe('generate', () => {
     ).rejects.toThrow('Source not found');
   });
 
-  it('generates all 6 files from .icon folder', async () => {
+  it('generates 5 default files from .icon folder (favicon excluded)', async () => {
     const outDir = path.join(tmpDir, 'icon-composer');
 
     await generate({
@@ -131,10 +133,12 @@ describe('generate', () => {
       bgColor: '#FFFFFF',
     });
 
-    const allFiles = Object.values(OUTPUT_FILES);
-    for (const file of allFiles) {
-      expect(fs.existsSync(path.join(outDir, file))).toBe(true);
-    }
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.icon))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidForeground))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidBackground))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidMonochrome))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.splashIcon))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.favicon))).toBe(false);
 
     // Verify the composed icon is 1024x1024
     const meta = await sharp(path.join(outDir, 'icon.png')).metadata();
