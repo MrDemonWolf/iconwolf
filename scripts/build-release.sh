@@ -39,7 +39,14 @@ echo "  Creating CLI wrapper..."
 mkdir -p "$STAGING/bin"
 cat > "$STAGING/bin/iconwolf" << 'WRAPPER'
 #!/bin/bash
-DIR="$(cd "$(dirname "$0")/.." && pwd)"
+# Resolve symlinks (Homebrew symlinks from /opt/homebrew/bin/ to libexec/)
+SOURCE="$0"
+while [ -L "$SOURCE" ]; do
+  LINK_DIR="$(cd "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ "$SOURCE" != /* ]] && SOURCE="$LINK_DIR/$SOURCE"
+done
+DIR="$(cd "$(dirname "$SOURCE")/.." && pwd)"
 NODE_PATH="$DIR/lib/node_modules" exec node "$DIR/lib/bundle.cjs" "$@"
 WRAPPER
 chmod +x "$STAGING/bin/iconwolf"
