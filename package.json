@@ -1,6 +1,6 @@
 {
   "name": "iconwolf",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A CLI tool that takes an iOS app compositor icon and generates all necessary icon variants for cross-platform use.",
   "type": "module",
   "main": "./dist/index.js",
