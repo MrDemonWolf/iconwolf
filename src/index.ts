@@ -14,7 +14,7 @@ program
     'Generate all necessary icon variants for cross-platform Expo/React Native projects from a single source icon.',
   )
   .version('0.0.3')
-  .argument('<input>', 'Path to the source iOS compositor icon (PNG)')
+  .argument('<input>', 'Path to an Apple Icon Composer .icon folder or a source PNG')
   .option('-o, --output <dir>', 'Output directory', DEFAULT_OUTPUT_DIR)
   .option('--android', 'Generate Android adaptive icon variants only')
   .option('--favicon', 'Generate web favicon only')

@@ -77,7 +77,7 @@ describe('generate', () => {
         variants: { android: false, favicon: false, splash: false, icon: false },
         bgColor: '#FFFFFF',
       }),
-    ).rejects.toThrow('Source file not found');
+    ).rejects.toThrow('Source not found');
   });
 
   it('creates output directory if it does not exist', async () => {
