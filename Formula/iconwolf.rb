@@ -1,8 +1,8 @@
 class Iconwolf < Formula
   desc "Cross-platform app icon generator for Expo/React Native projects"
   homepage "https://github.com/MrDemonWolf/iconwolf"
-  url "https://github.com/MrDemonWolf/iconwolf/archive/refs/tags/v1.0.0.tar.gz"
-  sha256 ""
+  url "https://github.com/MrDemonWolf/iconwolf/archive/refs/tags/v0.0.1.tar.gz"
+  sha256 "a86dd90a4ffff43209a9cf38f2b625002192ef715d84283f4b558d1d0526f66b"
   license "MIT"
 
   depends_on "node"
@@ -25,6 +25,6 @@ class Iconwolf < Formula
   end
 
   test do
-    assert_match "1.0.0", shell_output("#{bin}/iconwolf --version")
+    assert_match "0.0.1", shell_output("#{bin}/iconwolf --version")
   end
 end
