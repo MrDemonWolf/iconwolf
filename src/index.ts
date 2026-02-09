@@ -13,7 +13,7 @@ program
   .description(
     'Generate all necessary icon variants for cross-platform Expo/React Native projects from a single source icon.',
   )
-  .version('1.0.0')
+  .version('0.0.1')
   .argument('<input>', 'Path to the source iOS compositor icon (PNG)')
   .option('-o, --output <dir>', 'Output directory', DEFAULT_OUTPUT_DIR)
   .option('--android', 'Generate Android adaptive icon variants only')
