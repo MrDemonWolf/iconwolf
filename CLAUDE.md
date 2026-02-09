@@ -10,6 +10,7 @@ Cross-platform app icon generator CLI for Expo/React Native projects.
 - **CLI framework**: Commander
 - **Console output**: Chalk
 - **Testing**: Vitest
+- **Binary packaging**: @yao-pkg/pkg (standalone executables with Node.js + sharp bundled)
 - **Package manager**: pnpm
 
 ## Project Structure
@@ -40,6 +41,7 @@ Formula/
 ## Commands
 
 - `pnpm run build` - Compile TypeScript to `dist/`
+- `pnpm run build:binary` - Build standalone binary to `dist-bin/` (uses @yao-pkg/pkg)
 - `pnpm run dev` - Watch mode compilation
 - `pnpm test` - Run all tests with Vitest
 - `pnpm run lint` - ESLint
@@ -51,4 +53,5 @@ Formula/
 - Android adaptive icons use the 66/108 safe zone ratio (626px in 1024px canvas, 199px margin).
 - When no variant flags are set, the generator produces all 6 output files.
 - Default output directory is `./assets/images/` (Expo convention).
-- The Homebrew formula in `Formula/iconwolf.rb` needs the `sha256` and `url` updated for each tagged release before copying to the tap repo.
+- Homebrew distributes pre-built binaries (no build-from-source). The `Build Binary` GitHub Action compiles binaries for macOS arm64, macOS x64, and Linux x64 on every release. The `Update Homebrew Tap` action then updates the formula in `homebrew-den` with the correct sha256 hashes.
+- Releasing: bump version in `package.json` + `src/index.ts`, push, create a GitHub release. The CI handles the rest.
