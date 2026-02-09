@@ -1,24 +1,42 @@
 name: Update Homebrew Tap
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["Build Binary"]
+    types: [completed]
 
 jobs:
   update-tap:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Get release info
+      - name: Get release tag
         id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          TARBALL_URL="https://github.com/${{ github.repository }}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz"
-          SHA256=$(curl -sL "$TARBALL_URL" | sha256sum | awk '{print $1}')
+          TAG="${{ github.event.workflow_run.head_branch }}"
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
-          echo "sha256=$SHA256" >> "$GITHUB_OUTPUT"
 
-      - name: Update tap formula
+      - name: Download release assets and compute sha256
+        id: hashes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.release.outputs.tag }}"
+          BASE_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}"
+
+          curl -sL "${BASE_URL}/iconwolf-macos-arm64.tar.gz" -o arm64.tar.gz
+          curl -sL "${BASE_URL}/iconwolf-macos-x64.tar.gz" -o x64.tar.gz
+          curl -sL "${BASE_URL}/iconwolf-linux-x64.tar.gz" -o linux.tar.gz
+
+          echo "sha256_arm64=$(sha256sum arm64.tar.gz | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "sha256_x64=$(sha256sum x64.tar.gz | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "sha256_linux=$(sha256sum linux.tar.gz | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout tap
         uses: actions/checkout@v4
         with:
           repository: MrDemonWolf/homebrew-den
@@ -26,25 +44,37 @@ jobs:
           path: homebrew-den
 
       - name: Write updated formula
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+          VERSION: ${{ steps.release.outputs.version }}
+          SHA256_ARM64: ${{ steps.hashes.outputs.sha256_arm64 }}
+          SHA256_X64: ${{ steps.hashes.outputs.sha256_x64 }}
+          SHA256_LINUX: ${{ steps.hashes.outputs.sha256_linux }}
         run: |
-          cat > homebrew-den/Formula/iconwolf.rb << 'RUBY'
+          cat > homebrew-den/Formula/iconwolf.rb << RUBY
           class Iconwolf < Formula
             desc "Cross-platform app icon generator for Expo/React Native projects"
             homepage "https://github.com/MrDemonWolf/iconwolf"
-            url "https://github.com/MrDemonWolf/iconwolf/archive/refs/tags/TAG.tar.gz"
-            sha256 "HASH"
+            version "${VERSION}"
             license "MIT"
 
-            depends_on "node"
+            on_macos do
+              if Hardware::CPU.arm?
+                url "https://github.com/MrDemonWolf/iconwolf/releases/download/${TAG}/iconwolf-macos-arm64.tar.gz"
+                sha256 "${SHA256_ARM64}"
+              else
+                url "https://github.com/MrDemonWolf/iconwolf/releases/download/${TAG}/iconwolf-macos-x64.tar.gz"
+                sha256 "${SHA256_X64}"
+              end
+            end
+
+            on_linux do
+              url "https://github.com/MrDemonWolf/iconwolf/releases/download/${TAG}/iconwolf-linux-x64.tar.gz"
+              sha256 "${SHA256_LINUX}"
+            end
 
             def install
-              system "npm", "install"
-              system "npm", "run", "build"
-              system "npm", "prune", "--omit=dev"
-
-              libexec.install "dist", "node_modules", "package.json"
-              (bin/"iconwolf").write_env_script libexec/"dist/index.js",
-                                               PATH: "#{Formula["node"].opt_bin}:$PATH"
+              bin.install "iconwolf"
             end
 
             def caveats
@@ -55,18 +85,15 @@ jobs:
                 To fully remove iconwolf:
                   brew uninstall iconwolf
 
-                This removes the CLI binary and all supporting files. No other cleanup needed.
+                This removes the CLI binary. No other cleanup needed.
               EOS
             end
 
             test do
-              assert_match "VER", shell_output("#{bin}/iconwolf --version")
+              assert_match "${VERSION}", shell_output("#{bin}/iconwolf --version")
             end
           end
           RUBY
-          sed -i "s|TAG|${{ steps.release.outputs.tag }}|g" homebrew-den/Formula/iconwolf.rb
-          sed -i "s|HASH|${{ steps.release.outputs.sha256 }}|g" homebrew-den/Formula/iconwolf.rb
-          sed -i "s|VER|${{ steps.release.outputs.version }}|g" homebrew-den/Formula/iconwolf.rb
 
       - name: Commit and push
         run: |
