@@ -26,9 +26,10 @@ pnpm exec esbuild dist/index.js \
 
 # Step 3: Install sharp with all deps into staging (production, self-contained)
 echo "  Installing sharp into staging..."
+SHARP_VERSION=$(node -p "require('./package.json').dependencies.sharp")
 cd "$STAGING/lib"
 cat > package.json << EOF
-{"private":true,"dependencies":{"sharp":"$(node -p "require('../../package.json').dependencies.sharp")"}}
+{"private":true,"dependencies":{"sharp":"${SHARP_VERSION}"}}
 EOF
 npm install --omit=dev 2>&1 | tail -1
 rm -f package.json package-lock.json
