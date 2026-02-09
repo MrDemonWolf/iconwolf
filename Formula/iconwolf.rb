@@ -8,8 +8,16 @@ class Iconwolf < Formula
   depends_on "node"
 
   def install
-    system "npm", "install", *std_npm_args
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    # Install all deps (including devDeps for TypeScript compilation)
+    system "npm", "install"
+    # Compile TypeScript to dist/
+    system "npm", "run", "build"
+    # Prune devDependencies before packaging
+    system "npm", "prune", "--omit=dev"
+
+    libexec.install "dist", "node_modules", "package.json"
+    (bin/"iconwolf").write_env_script libexec/"dist/index.js",
+                                     PATH: "#{Formula["node"].opt_bin}:$PATH"
   end
 
   def caveats
@@ -25,6 +33,6 @@ class Iconwolf < Formula
   end
 
   test do
-    assert_match "0.0.1", shell_output("#{bin}/iconwolf --version")
+    assert_match "0.0.2", shell_output("#{bin}/iconwolf --version")
   end
 end
