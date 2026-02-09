@@ -1,22 +1,32 @@
-# iconwolf - Cross-platform app icon generator
+# iconwolf - Cross-platform app icon generator for Expo/React Native
 
-[![GitHub license](https://img.shields.io/github/license/MrDemonWolf/iconwolf)](https://github.com/MrDemonWolf/iconwolf/blob/main/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/MrDemonWolf/iconwolf)](https://github.com/MrDemonWolf/iconwolf/issues)
-[![GitHub stars](https://img.shields.io/github/stars/MrDemonWolf/iconwolf)](https://github.com/MrDemonWolf/iconwolf/stargazers)
+A CLI tool that takes a single iOS app compositor icon and
+generates all necessary icon variants for cross-platform use.
+Built for React Native and Expo projects, iconwolf produces
+Android adaptive icons, web favicons, splash screen icons,
+and standard app icons -- all from one source image.
 
-A CLI tool that takes an iOS app compositor icon and generates all necessary icon variants for cross-platform use. Built for React Native / Expo projects, iconwolf produces Android adaptive icons (foreground, background, monochrome), web favicons, splash screen icons, and standard icons -- all from a single source image.
+One icon to rule them all.
 
 ## Features
 
-- Generate Android adaptive icon variants (foreground, background, monochrome)
-- Generate web favicon
-- Generate splash screen icon
-- Generate standard icon.png
-- Expo convention output paths (drop-in ready for Expo projects)
-- Custom output directory support
-- Configurable variant selection via CLI flags
+- **Android Adaptive Icons** - Generates foreground, background,
+  and monochrome variants using the 66/108 safe zone ratio.
+- **Web Favicon** - Produces a 48x48 favicon ready for the web.
+- **Splash Screen Icon** - Creates a 1024x1024 splash icon.
+- **Standard App Icon** - Outputs a universal 1024x1024 icon.
+- **Expo Drop-in Ready** - Defaults to `./assets/images/` to
+  match Expo project conventions out of the box.
+- **Selective Generation** - Use CLI flags to generate only the
+  variants you need.
+- **Custom Background Color** - Configure the Android adaptive
+  icon background color via `--bg-color`.
 
 ## Getting Started
+
+1. Install iconwolf via Homebrew or npm (see below).
+2. Run `iconwolf <your-icon.png>` in your project directory.
+3. All icon variants land in `./assets/images/` by default.
 
 ### Install via Homebrew
 
@@ -37,16 +47,6 @@ Or use it directly with npx:
 npx iconwolf <input-icon>
 ```
 
-### Quick Start
-
-```bash
-# Generate all icon variants using Expo conventions
-iconwolf icon-compositor.png
-
-# Specify a custom output directory
-iconwolf icon-compositor.png --output ./my-icons
-```
-
 ## Usage
 
 ```bash
@@ -55,22 +55,22 @@ iconwolf <input> [options]
 
 ### Arguments
 
-| Argument | Description |
-| -------- | ----------- |
+| Argument | Description                                  |
+| -------- | -------------------------------------------- |
 | `input`  | Path to the source iOS compositor icon (PNG) |
 
 ### Options
 
-| Flag | Description |
-| ---- | ----------- |
-| `-o, --output <dir>` | Custom output directory (default: `./assets/images/`) |
-| `--android` | Generate Android adaptive icon variants only |
-| `--favicon` | Generate web favicon only |
-| `--splash` | Generate splash screen icon only |
-| `--icon` | Generate standard icon.png only |
-| `--bg-color <hex>` | Background color for Android adaptive icon (default: `#FFFFFF`) |
-| `-h, --help` | Display help |
-| `-V, --version` | Display version |
+| Flag                 | Description                                                      |
+| -------------------- | ---------------------------------------------------------------- |
+| `-o, --output <dir>` | Custom output directory (default: `./assets/images/`)            |
+| `--android`          | Generate Android adaptive icon variants only                     |
+| `--favicon`          | Generate web favicon only                                        |
+| `--splash`           | Generate splash screen icon only                                 |
+| `--icon`             | Generate standard icon.png only                                  |
+| `--bg-color <hex>`   | Background color for Android adaptive icon (default: `#FFFFFF`)  |
+| `-h, --help`         | Display help                                                     |
+| `-V, --version`      | Display version                                                  |
 
 ### Examples
 
@@ -86,79 +86,88 @@ iconwolf app-icon.png --favicon --splash --output ./assets/icons
 
 # Generate only the standard icon
 iconwolf app-icon.png --icon
+
+# Use a custom background color for Android icons
+iconwolf app-icon.png --android --bg-color "#1A1A2E"
 ```
 
-## Output Files
+### Output Files
 
-| File | Dimensions | Purpose |
-|------|-----------|---------|
-| `icon.png` | 1024x1024 | Universal app icon (iOS/Android legacy) |
-| `android-icon-foreground.png` | 1024x1024 | Android adaptive icon foreground |
-| `android-icon-background.png` | 1024x1024 | Android adaptive icon background (solid color) |
-| `android-icon-monochrome.png` | 1024x1024 | Android 13+ themed icon (grayscale) |
-| `favicon.png` | 48x48 | Web favicon |
-| `splash-icon.png` | 1024x1024 | Splash screen icon |
+| File                           | Dimensions | Purpose                                     |
+| ------------------------------ | ---------- | ------------------------------------------- |
+| `icon.png`                     | 1024x1024  | Universal app icon (iOS/Android legacy)      |
+| `android-icon-foreground.png`  | 1024x1024  | Android adaptive icon foreground             |
+| `android-icon-background.png`  | 1024x1024  | Android adaptive icon background (solid)     |
+| `android-icon-monochrome.png`  | 1024x1024  | Android 13+ themed icon (grayscale)          |
+| `favicon.png`                  | 48x48      | Web favicon                                  |
+| `splash-icon.png`              | 1024x1024  | Splash screen icon                           |
 
 ## Tech Stack
 
-- **Node.js** - Runtime
-- **Sharp** - High-performance image processing
-- **Commander** - CLI framework
-- **TypeScript** - Language
-- **esbuild** - Bundling for release builds
+| Layer            | Technology  |
+| ---------------- | ----------- |
+| Runtime          | Node.js     |
+| Language         | TypeScript  |
+| Image Processing | Sharp       |
+| CLI Framework    | Commander   |
+| Console Output   | Chalk       |
+| Testing          | Vitest      |
+| Bundling         | esbuild     |
+| Package Manager  | pnpm        |
 
 ## Development
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or higher)
+- [Node.js](https://nodejs.org/) v18 or higher
 - [pnpm](https://pnpm.io/)
 
 ### Setup
 
+1. Clone the repository:
+
 ```bash
-# Clone the repository
 git clone https://github.com/MrDemonWolf/iconwolf.git
 cd iconwolf
+```
 
-# Install dependencies
+2. Install dependencies:
+
+```bash
 pnpm install
 ```
 
-### Scripts
+3. Build the project:
 
 ```bash
-# Build TypeScript
 pnpm run build
-
-# Watch mode
-pnpm run dev
-
-# Run tests
-pnpm test
-
-# Build release tarball (for Homebrew distribution)
-pnpm run build:release
-
-# Lint
-pnpm run lint
-
-# Format
-pnpm run format
 ```
+
+### Development Scripts
+
+- `pnpm run build` - Compile TypeScript to `dist/`
+- `pnpm run build:release` - Build release tarball to `dist-bin/`
+  (esbuild bundle + sharp native bindings)
+- `pnpm run dev` - Watch mode compilation
+- `pnpm test` - Run all tests with Vitest
+- `pnpm run lint` - Run ESLint across `src/`
+- `pnpm run format` - Format code with Prettier
 
 ### Code Quality
 
-This project uses ESLint for linting and Prettier for code formatting.
+- ESLint with TypeScript rules for static analysis
+- Prettier for consistent code formatting
+- Vitest for unit and integration tests
+- Strict TypeScript configuration (ES2022, NodeNext)
 
 ## Project Structure
 
 ```
 iconwolf/
 ├── src/
-│   ├── index.ts            # CLI entry point
+│   ├── index.ts            # CLI entry point (Commander setup)
 │   ├── generator.ts        # Icon generation orchestrator
-│   ├── types.ts            # Shared interfaces
+│   ├── types.ts            # Shared TypeScript interfaces
 │   ├── variants/
 │   │   ├── android.ts      # Android adaptive icon variants
 │   │   ├── favicon.ts      # Web favicon generation
@@ -166,7 +175,7 @@ iconwolf/
 │   │   └── standard.ts     # Standard icon generation
 │   └── utils/
 │       ├── image.ts        # Sharp image processing helpers
-│       ├── paths.ts        # Expo convention path resolution
+│       ├── paths.ts        # Output path resolution
 │       └── logger.ts       # Console output formatting
 ├── tests/                  # Vitest test suite
 ├── scripts/
@@ -181,14 +190,17 @@ iconwolf/
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+![GitHub license](https://img.shields.io/github/license/mrdemonwolf/iconwolf.svg?style=for-the-badge&logo=github)
+
+This project is licensed under the MIT License. See the
+[LICENSE](LICENSE) file for details.
 
 ## Contact
 
-Have questions or need help? Reach out on Discord.
+Have questions or feedback?
 
-[![Discord](https://img.shields.io/discord/685086771160064050?color=7289da&label=Discord&logo=discord&logoColor=white)](https://discord.gg/MrDemonWolf)
+- Discord: [Join my server](https://mrdwolf.net/discord)
 
 ---
 
-Made with care by [MrDemonWolf](https://github.com/MrDemonWolf)
+Made with love by [MrDemonWolf, Inc.](https://www.mrdemonwolf.com)
