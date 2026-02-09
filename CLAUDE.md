@@ -10,7 +10,7 @@ Cross-platform app icon generator CLI for Expo/React Native projects.
 - **CLI framework**: Commander
 - **Console output**: Chalk
 - **Testing**: Vitest
-- **Binary packaging**: @yao-pkg/pkg (standalone executables with Node.js + sharp bundled)
+- **Bundling**: esbuild (CJS bundle for release tarballs)
 - **Package manager**: pnpm
 
 ## Project Structure
@@ -41,7 +41,7 @@ Formula/
 ## Commands
 
 - `pnpm run build` - Compile TypeScript to `dist/`
-- `pnpm run build:binary` - Build standalone binary to `dist-bin/` (uses @yao-pkg/pkg)
+- `pnpm run build:release` - Build release tarball to `dist-bin/` (esbuild bundle + sharp native bindings)
 - `pnpm run dev` - Watch mode compilation
 - `pnpm test` - Run all tests with Vitest
 - `pnpm run lint` - ESLint
@@ -53,5 +53,6 @@ Formula/
 - Android adaptive icons use the 66/108 safe zone ratio (626px in 1024px canvas, 199px margin).
 - When no variant flags are set, the generator produces all 6 output files.
 - Default output directory is `./assets/images/` (Expo convention).
-- Homebrew distributes pre-built binaries (no build-from-source). The `Build Binary` GitHub Action compiles binaries for macOS arm64, macOS x64, and Linux x64 on every release. The `Update Homebrew Tap` action then updates the formula in `homebrew-den` with the correct sha256 hashes.
-- Releasing: bump version in `package.json` + `src/index.ts`, push, create a GitHub release. The CI handles the rest.
+- Homebrew distributes pre-built tarballs (esbuild bundle + sharp native bindings, no compilation on install). The `Build Binary` GitHub Action builds on macOS arm64 on every release. The `Update Homebrew Tap` action then updates the formula in `homebrew-den` with the correct sha256 hash. Requires `HOMEBREW_TAP_TOKEN` secret.
+- Releasing: bump version in `package.json` + `src/index.ts`, push, create a GitHub release. CI handles building and updating the tap.
+- Local release build: `bash scripts/build-release.sh macos-arm64` then `gh release upload <tag> dist-bin/iconwolf-macos-arm64.tar.gz`
