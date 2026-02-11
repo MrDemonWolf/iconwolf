@@ -1,0 +1,80 @@
+import { execSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { createTestPng, createTmpDir, cleanDir } from './helpers.js';
+
+let tmpDir: string;
+let testPng: string;
+const CLI_PATH = path.resolve('dist/index.js');
+
+beforeAll(async () => {
+  tmpDir = createTmpDir();
+  testPng = await createTestPng(1024, 1024, tmpDir);
+});
+
+afterAll(() => {
+  cleanDir(tmpDir);
+});
+
+function runCli(args: string): string {
+  return execSync(`node ${CLI_PATH} ${args}`, {
+    encoding: 'utf-8',
+    timeout: 30000,
+  });
+}
+
+describe('CLI end-to-end', () => {
+  it('prints version with --version', () => {
+    const output = runCli('--version');
+    expect(output.trim()).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+
+  it('prints help with --help', () => {
+    const output = runCli('--help');
+    expect(output).toContain('iconwolf');
+    expect(output).toContain('--output');
+    expect(output).toContain('--android');
+    expect(output).toContain('--favicon');
+    expect(output).toContain('--splash');
+    expect(output).toContain('--icon');
+    expect(output).toContain('--bg-color');
+  });
+
+  it('generates icon.png via CLI with --icon flag', () => {
+    const outDir = path.join(tmpDir, 'cli-icon');
+
+    runCli(`${testPng} --icon -o ${outDir}`);
+
+    expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(false);
+  });
+
+  it('generates all default files via CLI', () => {
+    const outDir = path.join(tmpDir, 'cli-all');
+
+    runCli(`${testPng} -o ${outDir}`);
+
+    expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'android-icon-background.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'android-icon-monochrome.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(false);
+  });
+
+  it('exits with error on missing input file', () => {
+    expect(() => {
+      runCli('/tmp/nonexistent-icon.png -o /tmp/out');
+    }).toThrow();
+  });
+
+  it('generates favicon when --favicon flag is used', () => {
+    const outDir = path.join(tmpDir, 'cli-favicon');
+
+    runCli(`${testPng} --favicon -o ${outDir}`);
+
+    expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(false);
+  });
+});

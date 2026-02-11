@@ -59,7 +59,12 @@ export function isIconComposerFolder(inputPath: string): boolean {
  * Parse a color string from icon.json to sRGB values.
  * Supports formats: "display-p3:R,G,B,A" and "srgb:R,G,B,A" (values 0-1).
  */
-function parseIconColor(color: string): { r: number; g: number; b: number; a: number } {
+function parseIconColor(color: string): {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+} {
   const match = color.match(/^[\w-]+:([\d.]+),([\d.]+),([\d.]+),([\d.]+)$/);
   if (!match) {
     throw new Error(`Unsupported color format: ${color}`);
@@ -91,7 +96,10 @@ function rgbToHex(r: number, g: number, b: number): string {
  */
 function createGradientSvg(
   colors: string[],
-  orientation: { start: { x: number; y: number }; stop: { x: number; y: number } },
+  orientation: {
+    start: { x: number; y: number };
+    stop: { x: number; y: number };
+  },
   size: number,
 ): string {
   const parsedColors = colors.map(parseIconColor);
@@ -102,7 +110,8 @@ function createGradientSvg(
 
   const stops = parsedColors
     .map((c, i) => {
-      const offset = parsedColors.length === 1 ? 0 : (i / (parsedColors.length - 1)) * 100;
+      const offset =
+        parsedColors.length === 1 ? 0 : (i / (parsedColors.length - 1)) * 100;
       return `<stop offset="${offset}%" stop-color="rgb(${c.r},${c.g},${c.b})" stop-opacity="${c.a}" />`;
     })
     .join('\n      ');
@@ -120,13 +129,18 @@ function createGradientSvg(
 /**
  * Create the background buffer from the icon.json fill definition.
  */
-async function createBackground(fill: IconComposerFill): Promise<{ buffer: Buffer; bgColor: string }> {
+async function createBackground(
+  fill: IconComposerFill,
+): Promise<{ buffer: Buffer; bgColor: string }> {
   if (fill['linear-gradient'] && fill.orientation) {
     const colors = fill['linear-gradient'];
     const svg = createGradientSvg(colors, fill.orientation, ICON_SIZE);
     const buffer = await sharp(Buffer.from(svg)).png().toBuffer();
     const firstColor = parseIconColor(colors[0]);
-    return { buffer, bgColor: rgbToHex(firstColor.r, firstColor.g, firstColor.b) };
+    return {
+      buffer,
+      bgColor: rgbToHex(firstColor.r, firstColor.g, firstColor.b),
+    };
   }
 
   const solidColor = fill.solid ?? fill.color;
@@ -137,7 +151,12 @@ async function createBackground(fill: IconComposerFill): Promise<{ buffer: Buffe
         width: ICON_SIZE,
         height: ICON_SIZE,
         channels: 4,
-        background: { r: color.r, g: color.g, b: color.b, alpha: Math.round(color.a * 255) },
+        background: {
+          r: color.r,
+          g: color.g,
+          b: color.b,
+          alpha: Math.round(color.a * 255),
+        },
       },
     })
       .png()
@@ -163,7 +182,9 @@ async function createBackground(fill: IconComposerFill): Promise<{ buffer: Buffe
  * Render an Apple Icon Composer .icon folder into a composed 1024x1024 PNG.
  * Returns the path to the composed image and the extracted background color.
  */
-export async function renderIconComposerFolder(iconFolderPath: string): Promise<IconComposerResult> {
+export async function renderIconComposerFolder(
+  iconFolderPath: string,
+): Promise<IconComposerResult> {
   const manifestPath = path.join(iconFolderPath, 'icon.json');
   const assetsPath = path.join(iconFolderPath, 'Assets');
 
@@ -175,7 +196,8 @@ export async function renderIconComposerFolder(iconFolderPath: string): Promise<
   const manifest: IconComposerManifest = JSON.parse(manifestRaw);
 
   // Create background
-  const { buffer: backgroundBuffer, bgColor: extractedBgColor } = await createBackground(manifest.fill);
+  const { buffer: backgroundBuffer, bgColor: extractedBgColor } =
+    await createBackground(manifest.fill);
 
   // Build composite operations for each layer
   const compositeOps: sharp.OverlayOptions[] = [];
@@ -189,7 +211,9 @@ export async function renderIconComposerFolder(iconFolderPath: string): Promise<
 
       const meta = await sharp(imagePath).metadata();
       if (!meta.width || !meta.height) {
-        throw new Error(`Cannot read dimensions of layer: ${layer['image-name']}`);
+        throw new Error(
+          `Cannot read dimensions of layer: ${layer['image-name']}`,
+        );
       }
 
       // Scale relative to original image size
@@ -211,7 +235,12 @@ export async function renderIconComposerFolder(iconFolderPath: string): Promise<
         .toBuffer();
 
       // If the layer extends beyond the canvas, crop to visible region
-      if (left < 0 || top < 0 || left + scaledWidth > ICON_SIZE || top + scaledHeight > ICON_SIZE) {
+      if (
+        left < 0 ||
+        top < 0 ||
+        left + scaledWidth > ICON_SIZE ||
+        top + scaledHeight > ICON_SIZE
+      ) {
         const cropLeft = Math.max(0, -left);
         const cropTop = Math.max(0, -top);
         const cropRight = Math.min(scaledWidth, ICON_SIZE - left);
@@ -222,7 +251,12 @@ export async function renderIconComposerFolder(iconFolderPath: string): Promise<
         if (cropWidth <= 0 || cropHeight <= 0) continue;
 
         layerBuffer = await sharp(layerBuffer)
-          .extract({ left: cropLeft, top: cropTop, width: cropWidth, height: cropHeight })
+          .extract({
+            left: cropLeft,
+            top: cropTop,
+            width: cropWidth,
+            height: cropHeight,
+          })
           .png()
           .toBuffer();
         left = Math.max(0, left);
@@ -237,7 +271,10 @@ export async function renderIconComposerFolder(iconFolderPath: string): Promise<
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'iconwolf-compose-'));
   const composedPath = path.join(tmpDir, 'composed-icon.png');
 
-  await sharp(backgroundBuffer).composite(compositeOps).png().toFile(composedPath);
+  await sharp(backgroundBuffer)
+    .composite(compositeOps)
+    .png()
+    .toFile(composedPath);
 
   return {
     composedImagePath: composedPath,

@@ -13,14 +13,21 @@ program
   .description(
     'Generate all necessary icon variants for cross-platform Expo/React Native projects from a single source icon.',
   )
-  .version('0.0.5')
-  .argument('<input>', 'Path to an Apple Icon Composer .icon folder or a source PNG')
+  .version('0.0.6')
+  .argument(
+    '<input>',
+    'Path to an Apple Icon Composer .icon folder or a source PNG',
+  )
   .option('-o, --output <dir>', 'Output directory', resolveDefaultOutputDir())
   .option('--android', 'Generate Android adaptive icon variants only')
   .option('--favicon', 'Generate web favicon only')
   .option('--splash', 'Generate splash screen icon only')
   .option('--icon', 'Generate standard icon.png only')
-  .option('--bg-color <hex>', 'Background color for Android adaptive icon', '#FFFFFF')
+  .option(
+    '--bg-color <hex>',
+    'Background color for Android adaptive icon',
+    '#FFFFFF',
+  )
   .action(async (input: string, opts) => {
     const options: GeneratorOptions = {
       inputPath: input,

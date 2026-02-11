@@ -2,7 +2,10 @@ import chalk from 'chalk';
 import type { GenerationResult } from '../types.js';
 
 export function banner(): void {
-  console.log(chalk.bold.hex('#FF6B35')('\n  iconwolf') + chalk.dim(' - app icon generator\n'));
+  console.log(
+    chalk.bold.hex('#FF6B35')('\n  iconwolf') +
+      chalk.dim(' - app icon generator\n'),
+  );
 }
 
 export function info(message: string): void {
@@ -35,7 +38,8 @@ export function summary(results: GenerationResult[]): void {
   const totalSize = results.reduce((sum, r) => sum + r.size, 0);
   const totalKB = (totalSize / 1024).toFixed(1);
   console.log(
-    chalk.bold(`\n  ${results.length} file${results.length === 1 ? '' : 's'} generated`) +
-      chalk.dim(` (${totalKB} KB total)\n`),
+    chalk.bold(
+      `\n  ${results.length} file${results.length === 1 ? '' : 's'} generated`,
+    ) + chalk.dim(` (${totalKB} KB total)\n`),
   );
 }

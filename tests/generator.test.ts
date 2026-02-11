@@ -159,4 +159,132 @@ describe('generate', () => {
     expect(fs.existsSync(outDir)).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(true);
   });
+
+  it('generates only favicon when --favicon flag set', async () => {
+    const outDir = path.join(tmpDir, 'favicon-only');
+
+    await generate({
+      inputPath: testPng,
+      outputDir: outDir,
+      variants: { android: false, favicon: true, splash: false, icon: false },
+      bgColor: '#FFFFFF',
+    });
+
+    expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(false);
+    expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(false);
+    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(false);
+  });
+
+  it('generates only splash when --splash flag set', async () => {
+    const outDir = path.join(tmpDir, 'splash-only');
+
+    await generate({
+      inputPath: testPng,
+      outputDir: outDir,
+      variants: { android: false, favicon: false, splash: true, icon: false },
+      bgColor: '#FFFFFF',
+    });
+
+    expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(false);
+    expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(false);
+    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(false);
+  });
+
+  it('generates multiple variants when multiple flags set', async () => {
+    const outDir = path.join(tmpDir, 'multi-flags');
+
+    await generate({
+      inputPath: testPng,
+      outputDir: outDir,
+      variants: { android: true, favicon: true, splash: false, icon: false },
+      bgColor: '#FFFFFF',
+    });
+
+    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'android-icon-background.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'android-icon-monochrome.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(false);
+    expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(false);
+  });
+
+  it('uses custom bg-color for .icon folder when provided', async () => {
+    const outDir = path.join(tmpDir, 'icon-custom-bg');
+
+    await generate({
+      inputPath: testIconFolder,
+      outputDir: outDir,
+      variants: { android: true, favicon: false, splash: false, icon: false },
+      bgColor: '#FF0000',
+    });
+
+    expect(fs.existsSync(path.join(outDir, 'android-icon-background.png'))).toBe(true);
+
+    const { channels } = await sharp(path.join(outDir, 'android-icon-background.png')).stats();
+    expect(channels[0].mean).toBeCloseTo(255, -1); // Red
+    expect(channels[1].mean).toBeCloseTo(0, -1);   // Green
+    expect(channels[2].mean).toBeCloseTo(0, -1);   // Blue
+  });
+
+  it('cleans up temp composed image from .icon folder', async () => {
+    const os = await import('node:os');
+    const outDir = path.join(tmpDir, 'icon-cleanup');
+
+    // Count compose dirs before
+    const composeDirsBefore = fs
+      .readdirSync(os.tmpdir())
+      .filter((d) => d.startsWith('iconwolf-compose-'));
+
+    await generate({
+      inputPath: testIconFolder,
+      outputDir: outDir,
+      variants: { android: false, favicon: false, splash: false, icon: true },
+      bgColor: '#FFFFFF',
+    });
+
+    // No new compose dirs should remain after generation
+    const composeDirsAfter = fs
+      .readdirSync(os.tmpdir())
+      .filter((d) => d.startsWith('iconwolf-compose-'));
+    expect(composeDirsAfter.length).toBeLessThanOrEqual(composeDirsBefore.length);
+
+    expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(true);
+  });
+
+  it('throws on directory that is not a .icon folder or PNG', async () => {
+    const fakeDir = path.join(tmpDir, 'not-icon-dir');
+    fs.mkdirSync(fakeDir, { recursive: true });
+    fs.writeFileSync(path.join(fakeDir, 'dummy.txt'), 'test');
+
+    await expect(
+      generate({
+        inputPath: fakeDir,
+        outputDir: path.join(tmpDir, 'err-out'),
+        variants: { android: false, favicon: false, splash: false, icon: false },
+        bgColor: '#FFFFFF',
+      }),
+    ).rejects.toThrow();
+  });
+
+  it('favicon has rounded corners with transparent pixels', async () => {
+    const outDir = path.join(tmpDir, 'favicon-corners');
+
+    await generate({
+      inputPath: testPng,
+      outputDir: outDir,
+      variants: { android: false, favicon: true, splash: false, icon: false },
+      bgColor: '#FFFFFF',
+    });
+
+    const faviconPath = path.join(outDir, 'favicon.png');
+    expect(fs.existsSync(faviconPath)).toBe(true);
+
+    const { data, info } = await sharp(faviconPath).raw().toBuffer({ resolveWithObject: true });
+
+    // Top-left corner should be transparent (rounded)
+    expect(data[3]).toBe(0); // alpha of pixel (0,0)
+    expect(info.channels).toBe(4);
+  });
 });

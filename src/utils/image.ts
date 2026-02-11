@@ -11,11 +11,15 @@ export interface SourceImageMeta {
   format: string;
 }
 
-export async function validateSourceImage(inputPath: string): Promise<SourceImageMeta> {
+export async function validateSourceImage(
+  inputPath: string,
+): Promise<SourceImageMeta> {
   const metadata = await sharp(inputPath).metadata();
 
   if (!metadata.format || metadata.format !== 'png') {
-    throw new Error(`Source image must be a PNG file (got ${metadata.format || 'unknown'})`);
+    throw new Error(
+      `Source image must be a PNG file (got ${metadata.format || 'unknown'})`,
+    );
   }
 
   if (!metadata.width || !metadata.height) {
@@ -42,7 +46,10 @@ export async function resizeImage(
   outputPath: string,
 ): Promise<GenerationResult> {
   const info = await sharp(inputPath)
-    .resize(width, height, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .resize(width, height, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
     .png()
     .toFile(outputPath);
 
@@ -60,7 +67,10 @@ export async function createAdaptiveForeground(
   outputPath: string,
 ): Promise<GenerationResult> {
   const artwork = await sharp(inputPath)
-    .resize(SAFE_ZONE_PX, SAFE_ZONE_PX, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .resize(SAFE_ZONE_PX, SAFE_ZONE_PX, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
     .png()
     .toBuffer();
 
@@ -118,7 +128,10 @@ export async function createMonochromeIcon(
   outputPath: string,
 ): Promise<GenerationResult> {
   const artwork = await sharp(inputPath)
-    .resize(SAFE_ZONE_PX, SAFE_ZONE_PX, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .resize(SAFE_ZONE_PX, SAFE_ZONE_PX, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
     .grayscale()
     .png()
     .toBuffer();
@@ -165,7 +178,11 @@ export async function applyRoundedCorners(
     .toBuffer();
 }
 
-export function parseHexColor(hex: string): { r: number; g: number; b: number } {
+export function parseHexColor(hex: string): {
+  r: number;
+  g: number;
+  b: number;
+} {
   const cleaned = hex.replace(/^#/, '');
 
   let r: number, g: number, b: number;

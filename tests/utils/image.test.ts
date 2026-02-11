@@ -9,6 +9,7 @@ import {
   createAdaptiveForeground,
   createSolidBackground,
   createMonochromeIcon,
+  applyRoundedCorners,
 } from '../../src/utils/image.js';
 import { createTestPng, createTmpDir, cleanDir } from '../helpers.js';
 
@@ -139,5 +140,42 @@ describe('createMonochromeIcon', () => {
     expect(result.width).toBe(1024);
     expect(result.height).toBe(1024);
     expect(fs.existsSync(output)).toBe(true);
+  });
+});
+
+describe('applyRoundedCorners', () => {
+  it('returns a PNG buffer with alpha channel', async () => {
+    const input = await sharp({
+      create: { width: 48, height: 48, channels: 4, background: { r: 255, g: 0, b: 0, alpha: 255 } },
+    })
+      .png()
+      .toBuffer();
+
+    const result = await applyRoundedCorners(input, 48);
+    const meta = await sharp(result).metadata();
+
+    expect(meta.format).toBe('png');
+    expect(meta.width).toBe(48);
+    expect(meta.height).toBe(48);
+    expect(meta.channels).toBe(4);
+  });
+
+  it('produces transparent corners', async () => {
+    const input = await sharp({
+      create: { width: 100, height: 100, channels: 4, background: { r: 255, g: 0, b: 0, alpha: 255 } },
+    })
+      .png()
+      .toBuffer();
+
+    const result = await applyRoundedCorners(input, 100);
+    const { data, info } = await sharp(result).raw().toBuffer({ resolveWithObject: true });
+
+    // Top-left corner pixel (0,0) should be transparent due to rounding
+    const topLeftAlpha = data[3]; // RGBA, alpha is at index 3
+    expect(topLeftAlpha).toBe(0);
+
+    // Center pixel should be fully opaque
+    const centerIdx = (Math.floor(info.height / 2) * info.width + Math.floor(info.width / 2)) * 4;
+    expect(data[centerIdx + 3]).toBe(255);
   });
 });
