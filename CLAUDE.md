@@ -10,6 +10,8 @@ Cross-platform app icon generator CLI for Expo/React Native projects. Primary in
 - **CLI framework**: Commander
 - **Console output**: Chalk
 - **Testing**: Vitest
+- **Linting**: ESLint v9 (flat config with typescript-eslint)
+- **Formatting**: Prettier
 - **Bundling**: esbuild (CJS bundle for release tarballs)
 - **Package manager**: pnpm
 
@@ -32,13 +34,16 @@ src/
     android.ts      # android-icon-{foreground,background,monochrome}.png (1024x1024)
 tests/
   helpers.ts        # Test utilities (createTestPng, createTmpDir, cleanDir)
+  cli.test.ts       # CLI end-to-end tests (--version, --help, flags, error handling)
   generator.test.ts # Integration tests for the orchestrator (including .icon folder input)
   utils/            # Unit tests for image.ts, paths.ts, and icon-composer.ts
   variants/         # Unit tests for each variant generator
 Formula/
   iconwolf.rb       # Homebrew formula (update sha256 + url on release)
+eslint.config.js    # ESLint v9 flat config with typescript-eslint
+CHANGELOG.md        # Release changelog (all versions)
 .github/workflows/
-  test.yml          # CI: runs tests on push to main and PRs
+  test.yml          # CI: lint (ubuntu) + test (macOS 14) on push to main and PRs
   build-binary.yml  # CI: builds release tarball on GitHub release
   update-homebrew.yml # CI: updates homebrew-den tap formula after build
 ```
@@ -48,9 +53,10 @@ Formula/
 - `pnpm run build` - Compile TypeScript to `dist/`
 - `pnpm run build:release` - Build release tarball to `dist-bin/` (esbuild bundle + sharp native bindings)
 - `pnpm run dev` - Watch mode compilation
-- `pnpm test` - Run all tests with Vitest
+- `pnpm test` - Run all tests with Vitest (57 tests across 9 files)
 - `pnpm run lint` - ESLint
-- `pnpm run format` - Prettier
+- `pnpm run format` - Prettier (write mode)
+- `pnpm run format:check` - Prettier (check mode, used in CI)
 
 ## Key Architecture Notes
 
@@ -61,5 +67,5 @@ Formula/
 - Favicon has Apple-style rounded corners (~22.37% corner radius).
 - Default output directory is auto-detected: `./src/assets/images/` if a `src/` directory exists, otherwise `./assets/images/` (Expo convention).
 - Homebrew distributes pre-built tarballs (esbuild bundle + sharp native bindings, no compilation on install). The `Build Binary` GitHub Action builds on macOS arm64 on every release. The `Update Homebrew Tap` action then updates the formula in `homebrew-den` with the correct sha256 hash. Requires `HOMEBREW_TAP_TOKEN` secret.
-- Releasing: bump version in `package.json` + `src/index.ts`, push, create a GitHub release. CI handles building and updating the tap.
+- Releasing: bump version in `package.json` + `src/index.ts` + `Formula/iconwolf.rb`, update `CHANGELOG.md`, push, create a GitHub release. CI handles building and updating the tap.
 - Local release build: `bash scripts/build-release.sh macos-arm64` then `gh release upload <tag> dist-bin/iconwolf-macos-arm64.tar.gz`
