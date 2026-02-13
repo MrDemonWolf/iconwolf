@@ -43,3 +43,19 @@ export function summary(results: GenerationResult[]): void {
     ) + chalk.dim(` (${totalKB} KB total)\n`),
   );
 }
+
+export function updateNotice(
+  currentVersion: string,
+  latestVersion: string,
+): void {
+  console.log(
+    chalk.yellow('  update') +
+      chalk.dim(' · ') +
+      `New version available: ${chalk.dim(currentVersion)} → ${chalk.green(latestVersion)}`,
+  );
+  console.log(
+    '         ' +
+      chalk.dim(' · ') +
+      `Run ${chalk.cyan('brew upgrade iconwolf')} to update\n`,
+  );
+}

@@ -4,7 +4,13 @@ import { Command } from 'commander';
 import { generate } from './generator.js';
 import * as logger from './utils/logger.js';
 import { resolveDefaultOutputDir } from './utils/paths.js';
+import {
+  readCachedUpdateInfo,
+  refreshCacheInBackground,
+} from './utils/update-notifier.js';
 import type { GeneratorOptions } from './types.js';
+
+const VERSION = '0.0.6';
 
 const program = new Command();
 
@@ -13,7 +19,7 @@ program
   .description(
     'Generate all necessary icon variants for cross-platform Expo/React Native projects from a single source icon.',
   )
-  .version('0.0.6')
+  .version(VERSION)
   .argument(
     '<input>',
     'Path to an Apple Icon Composer .icon folder or a source PNG',
@@ -29,6 +35,9 @@ program
     '#FFFFFF',
   )
   .action(async (input: string, opts) => {
+    const updateInfo = readCachedUpdateInfo(VERSION);
+    refreshCacheInBackground().catch(() => {});
+
     const options: GeneratorOptions = {
       inputPath: input,
       outputDir: opts.output,
@@ -43,6 +52,10 @@ program
 
     try {
       await generate(options);
+
+      if (updateInfo?.updateAvailable) {
+        logger.updateNotice(updateInfo.currentVersion, updateInfo.latestVersion);
+      }
     } catch (err) {
       logger.error(err instanceof Error ? err.message : String(err));
       process.exit(1);
