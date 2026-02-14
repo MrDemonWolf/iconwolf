@@ -26,7 +26,8 @@ src/
     icon-composer.ts # Apple Icon Composer .icon folder parser and renderer
     image.ts        # Sharp operations (resize, adaptive foreground, solid bg, monochrome, rounded corners, hex parsing)
     paths.ts        # Output file name constants, resolveOutputPath(), resolveDefaultOutputDir()
-    logger.ts       # Chalk-based console output (banner, info, success, warn, error, summary)
+    logger.ts       # Chalk-based console output (banner, info, success, warn, error, summary, updateNotice)
+    update-notifier.ts # Non-blocking update checker (GitHub Releases API, 24h cached TTL, sync read + background fetch)
   variants/
     standard.ts     # icon.png (1024x1024)
     favicon.ts      # favicon.png (48x48, rounded corners, opt-in only via --favicon)
@@ -36,14 +37,14 @@ tests/
   helpers.ts        # Test utilities (createTestPng, createTmpDir, cleanDir)
   cli.test.ts       # CLI end-to-end tests (--version, --help, flags, error handling)
   generator.test.ts # Integration tests for the orchestrator (including .icon folder input)
-  utils/            # Unit tests for image.ts, paths.ts, and icon-composer.ts
+  utils/            # Unit tests for image.ts, paths.ts, icon-composer.ts, logger.ts, and update-notifier.ts
   variants/         # Unit tests for each variant generator
 Formula/
   iconwolf.rb       # Homebrew formula (update sha256 + url on release)
 eslint.config.js    # ESLint v9 flat config with typescript-eslint
 CHANGELOG.md        # Release changelog (all versions)
 .github/workflows/
-  test.yml          # CI: lint (ubuntu) + test (macOS 14) on push to main and PRs
+  test.yml          # CI: lint (ubuntu) + test matrix (Node 18/20/22 × ubuntu/macOS 14) on push to main and PRs
   build-binary.yml  # CI: builds release tarball on GitHub release
   update-homebrew.yml # CI: updates homebrew-den tap formula after build
 ```
@@ -53,10 +54,10 @@ CHANGELOG.md        # Release changelog (all versions)
 - `pnpm run build` - Compile TypeScript to `dist/`
 - `pnpm run build:release` - Build release tarball to `dist-bin/` (esbuild bundle + sharp native bindings)
 - `pnpm run dev` - Watch mode compilation
-- `pnpm test` - Run all tests with Vitest (57 tests across 9 files)
-- `pnpm run lint` - ESLint
-- `pnpm run format` - Prettier (write mode)
-- `pnpm run format:check` - Prettier (check mode, used in CI)
+- `pnpm test` - Run all tests with Vitest (87 tests across 11 files)
+- `pnpm run lint` - ESLint (src/ and tests/)
+- `pnpm run format` - Prettier (write mode, src/ and tests/)
+- `pnpm run format:check` - Prettier (check mode, src/ and tests/, used in CI)
 
 ## Key Architecture Notes
 
@@ -67,5 +68,6 @@ CHANGELOG.md        # Release changelog (all versions)
 - Favicon has Apple-style rounded corners (~22.37% corner radius).
 - Default output directory is auto-detected: `./src/assets/images/` if a `src/` directory exists, otherwise `./assets/images/` (Expo convention).
 - Homebrew distributes pre-built tarballs (esbuild bundle + sharp native bindings, no compilation on install). The `Build Binary` GitHub Action builds on macOS arm64 on every release. The `Update Homebrew Tap` action then updates the formula in `homebrew-den` with the correct sha256 hash. Requires `HOMEBREW_TAP_TOKEN` secret.
-- Releasing: bump version in `package.json` + `src/index.ts` + `Formula/iconwolf.rb`, update `CHANGELOG.md`, push, create a GitHub release. CI handles building and updating the tap.
+- **Update notifier**: On each `generate()` run, reads a cached version check from `~/.iconwolf/update-check.json` (sync, zero latency). Fires a background fetch to GitHub Releases API if the cache is stale (>24h). Shows a notice after successful generation if a newer version exists. All errors are silently swallowed.
+- Releasing: bump version in `package.json` + `src/index.ts` (the `VERSION` constant) + `Formula/iconwolf.rb`, update `CHANGELOG.md`, push, create a GitHub release. CI handles building and updating the tap.
 - Local release build: `bash scripts/build-release.sh macos-arm64` then `gh release upload <tag> dist-bin/iconwolf-macos-arm64.tar.gz`
