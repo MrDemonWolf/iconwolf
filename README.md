@@ -11,26 +11,32 @@ One icon to rule them all.
 ## Features
 
 - **Apple Icon Composer Support** - First-class support for
-  `.icon` folders from [Apple's Icon Composer](https://developer.apple.com/icon-composer/).
-  Renders gradient backgrounds, layers, and positioning automatically.
+  `.icon` folders from Apple's Icon Composer. Renders gradient
+  and solid backgrounds via SVG, composites foreground layers
+  with scale and translation automatically.
 - **Android Adaptive Icons** - Generates foreground, background,
   and monochrome variants using the 66/108 safe zone ratio.
-- **Web Favicon** - Produces a 48x48 favicon ready for the web.
+- **Web Favicon** - Produces a 48x48 favicon with Apple-style
+  rounded corners (~22.37% radius). Opt-in via `--favicon`.
 - **Splash Screen Icon** - Creates a 1024x1024 splash icon.
 - **Standard App Icon** - Outputs a universal 1024x1024 icon.
-- **Expo Drop-in Ready** - Defaults to `./assets/images/` to
-  match Expo project conventions out of the box.
+- **Expo Drop-in Ready** - Auto-detects `src/` projects and
+  defaults to `./src/assets/images/` or `./assets/images/`.
 - **Auto Background Color** - When using `.icon` input, the
-  background gradient color is automatically extracted for Android
-  adaptive icons.
-- **Selective Generation** - Use CLI flags to generate only the
-  variants you need.
+  background gradient color is automatically extracted for
+  Android adaptive icons.
+- **Selective Generation** - Use CLI flags to generate only
+  the variants you need.
 - **Custom Background Color** - Override the Android adaptive
   icon background color via `--bg-color`.
+- **Update Notifier** - Non-blocking version check against
+  GitHub Releases with a 24-hour cached TTL. Zero latency
+  impact on icon generation.
 
 ## Getting Started
 
-1. Design your icon in [Apple Icon Composer](https://developer.apple.com/icon-composer/).
+1. Design your icon in Apple Icon Composer (or use any
+   square PNG).
 2. Install iconwolf via Homebrew or npm (see below).
 3. Run `iconwolf AppIcon.icon` in your project directory.
 4. All icon variants land in `./assets/images/` by default.
@@ -62,36 +68,39 @@ iconwolf <input> [options]
 
 ### Arguments
 
-| Argument | Description                                                        |
-| -------- | ------------------------------------------------------------------ |
-| `input`  | Path to an Apple Icon Composer `.icon` folder or a source PNG file |
+| Argument | Description                                              |
+| -------- | -------------------------------------------------------- |
+| `input`  | Path to an Apple Icon Composer `.icon` folder or PNG     |
 
 ### Options
 
-| Flag                 | Description                                                      |
-| -------------------- | ---------------------------------------------------------------- |
-| `-o, --output <dir>` | Custom output directory (default: `./assets/images/`)            |
-| `--android`          | Generate Android adaptive icon variants only                     |
-| `--favicon`          | Generate web favicon only                                        |
-| `--splash`           | Generate splash screen icon only                                 |
-| `--icon`             | Generate standard icon.png only                                  |
-| `--bg-color <hex>`   | Background color for Android adaptive icon (default: `#FFFFFF`)  |
-| `-h, --help`         | Display help                                                     |
-| `-V, --version`      | Display version                                                  |
+| Flag                 | Description                                             |
+| -------------------- | ------------------------------------------------------- |
+| `-o, --output <dir>` | Custom output directory (default: auto-detected)        |
+| `--android`          | Generate Android adaptive icon variants only            |
+| `--favicon`          | Generate web favicon only (opt-in)                      |
+| `--splash`           | Generate splash screen icon only                        |
+| `--icon`             | Generate standard icon.png only                         |
+| `--bg-color <hex>`   | Background color for Android adaptive icon (`#FFFFFF`)  |
+| `-h, --help`         | Display help                                            |
+| `-V, --version`      | Display version                                         |
 
 ### Examples
 
 ```bash
-# Generate all variants from an Apple Icon Composer file
+# Generate all default variants from an .icon folder
 iconwolf AppIcon.icon
 
-# Generate all variants from a plain PNG
+# Generate all default variants from a plain PNG
 iconwolf app-icon.png
 
 # Generate only Android adaptive icons
 iconwolf AppIcon.icon --android
 
-# Generate favicon and splash icon to a custom directory
+# Include the rounded favicon
+iconwolf AppIcon.icon --favicon
+
+# Generate favicon and splash to a custom directory
 iconwolf AppIcon.icon --favicon --splash --output ./assets/icons
 
 # Generate only the standard icon
@@ -103,14 +112,17 @@ iconwolf AppIcon.icon --android --bg-color "#1A1A2E"
 
 ### Output Files
 
-| File                           | Dimensions | Purpose                                     |
-| ------------------------------ | ---------- | ------------------------------------------- |
-| `icon.png`                     | 1024x1024  | Universal app icon (iOS/Android legacy)      |
-| `android-icon-foreground.png`  | 1024x1024  | Android adaptive icon foreground             |
-| `android-icon-background.png`  | 1024x1024  | Android adaptive icon background (solid)     |
-| `android-icon-monochrome.png`  | 1024x1024  | Android 13+ themed icon (grayscale)          |
-| `favicon.png`                  | 48x48      | Web favicon                                  |
-| `splash-icon.png`              | 1024x1024  | Splash screen icon                           |
+By default (no flags), iconwolf generates 5 files. Favicon
+is opt-in only via `--favicon`.
+
+| File                           | Dimensions | Purpose                                |
+| ------------------------------ | ---------- | -------------------------------------- |
+| `icon.png`                     | 1024x1024  | Universal app icon                     |
+| `android-icon-foreground.png`  | 1024x1024  | Android adaptive icon foreground       |
+| `android-icon-background.png`  | 1024x1024  | Android adaptive icon background       |
+| `android-icon-monochrome.png`  | 1024x1024  | Android 13+ themed icon (grayscale)    |
+| `splash-icon.png`              | 1024x1024  | Splash screen icon                     |
+| `favicon.png`                  | 48x48      | Web favicon (opt-in via `--favicon`)   |
 
 ## Tech Stack
 
@@ -122,6 +134,8 @@ iconwolf AppIcon.icon --android --bg-color "#1A1A2E"
 | CLI Framework    | Commander   |
 | Console Output   | Chalk       |
 | Testing          | Vitest      |
+| Linting          | ESLint v9   |
+| Formatting       | Prettier    |
 | Bundling         | esbuild     |
 | Package Manager  | pnpm        |
 
@@ -156,47 +170,54 @@ pnpm run build
 ### Development Scripts
 
 - `pnpm run build` - Compile TypeScript to `dist/`
-- `pnpm run build:release` - Build release tarball to `dist-bin/`
-  (esbuild bundle + sharp native bindings)
+- `pnpm run build:release` - Build release tarball to
+  `dist-bin/` (esbuild bundle + sharp native bindings)
 - `pnpm run dev` - Watch mode compilation
-- `pnpm test` - Run all tests with Vitest
-- `pnpm run lint` - Run ESLint across `src/`
+- `pnpm test` - Run all tests with Vitest (87 tests
+  across 11 files)
+- `pnpm run lint` - ESLint across `src/` and `tests/`
 - `pnpm run format` - Format code with Prettier
+- `pnpm run format:check` - Check formatting (used in CI)
 
 ### Code Quality
 
-- ESLint with TypeScript rules for static analysis
+- ESLint v9 flat config with TypeScript rules
 - Prettier for consistent code formatting
-- Vitest for unit and integration tests
-- Strict TypeScript configuration (ES2022, NodeNext)
+- Vitest for unit, integration, and E2E tests
+- Strict TypeScript (ES2022, NodeNext module resolution)
+- CI runs lint + tests on Node 18/20/22 across Ubuntu
+  and macOS
 
 ## Project Structure
 
 ```
 iconwolf/
 ├── src/
-│   ├── index.ts            # CLI entry point (Commander setup)
+│   ├── index.ts            # CLI entry point (Commander)
 │   ├── generator.ts        # Icon generation orchestrator
 │   ├── types.ts            # Shared TypeScript interfaces
-│   ├── variants/
-│   │   ├── android.ts      # Android adaptive icon variants
-│   │   ├── favicon.ts      # Web favicon generation
-│   │   ├── splash.ts       # Splash screen icon generation
-│   │   └── standard.ts     # Standard icon generation
-│   └── utils/
-│       ├── icon-composer.ts # Apple Icon Composer .icon parser
-│       ├── image.ts        # Sharp image processing helpers
-│       ├── paths.ts        # Output path resolution
-│       └── logger.ts       # Console output formatting
+│   ├── utils/
+│   │   ├── icon-composer.ts # Apple Icon Composer parser
+│   │   ├── image.ts        # Sharp image processing
+│   │   ├── paths.ts        # Output path resolution
+│   │   ├── logger.ts       # Console output formatting
+│   │   └── update-notifier.ts # GitHub Releases update check
+│   └── variants/
+│       ├── android.ts      # Android adaptive icons
+│       ├── favicon.ts      # Web favicon generation
+│       ├── splash.ts       # Splash screen icon
+│       └── standard.ts     # Standard icon generation
 ├── tests/                  # Vitest test suite
 ├── scripts/
 │   └── build-release.sh    # Release build script
 ├── Formula/
 │   └── iconwolf.rb         # Homebrew formula
-├── .github/workflows/      # CI: tests, build binary, update Homebrew tap
+├── .github/workflows/      # CI: lint, test, build, Homebrew
 ├── package.json
 ├── tsconfig.json
-└── README.md
+├── CLAUDE.md               # AI assistant context
+├── CHANGELOG.md            # Release changelog
+└── LICENSE                 # MIT License
 ```
 
 ## License
@@ -210,7 +231,7 @@ This project is licensed under the MIT License. See the
 
 Have questions or feedback?
 
-- Discord: [Join my server](https://mrdwolf.net/discord)
+- Discord: [Join my server](https://mrdwolf.com/discord)
 
 ---
 

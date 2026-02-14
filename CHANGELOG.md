@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Non-blocking update notifier that checks GitHub Releases API with 24-hour cached TTL at `~/.iconwolf/update-check.json`
+- `updateNotice()` function in logger for displaying version upgrade info
+- `VERSION` constant in `src/index.ts` for centralized version management
+- Unit tests for all logger functions (`tests/utils/logger.test.ts`)
+- Unit tests for update notifier (`tests/utils/update-notifier.test.ts`)
+- README.md restored with full MrDemonWolf format
+
+### Changed
+
+- CI test matrix expanded to Node 18/20/22 on both Ubuntu and macOS (6 combinations, fail-fast disabled)
+- Lint, format, and format:check scripts now cover both `src/` and `tests/`
+- Test count increased from 57 to 87 across 11 test files
+
 ## [0.0.6] - 2025-02-11
 
 ### Added
