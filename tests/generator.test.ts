@@ -16,7 +16,12 @@ async function createMockIconFolder(dir: string): Promise<string> {
   fs.mkdirSync(assetsDir, { recursive: true });
 
   await sharp({
-    create: { width: 200, height: 200, channels: 4, background: { r: 255, g: 107, b: 53, alpha: 255 } },
+    create: {
+      width: 200,
+      height: 200,
+      channels: 4,
+      background: { r: 255, g: 107, b: 53, alpha: 255 },
+    },
   })
     .png()
     .toFile(path.join(assetsDir, 'logo.png'));
@@ -70,10 +75,18 @@ describe('generate', () => {
     });
 
     expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.icon))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidForeground))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidBackground))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidMonochrome))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.splashIcon))).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidForeground)),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidBackground)),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidMonochrome)),
+    ).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.splashIcon))).toBe(
+      true,
+    );
     expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.favicon))).toBe(false);
   });
 
@@ -90,7 +103,9 @@ describe('generate', () => {
     expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(false);
     expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(false);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(false);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-foreground.png')),
+    ).toBe(false);
   });
 
   it('generates only android files when --android flag set', async () => {
@@ -103,9 +118,15 @@ describe('generate', () => {
       bgColor: '#FFFFFF',
     });
 
-    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-background.png'))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-monochrome.png'))).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-foreground.png')),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-background.png')),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-monochrome.png')),
+    ).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(false);
     expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(false);
   });
@@ -117,7 +138,12 @@ describe('generate', () => {
       generate({
         inputPath: '/tmp/does-not-exist.png',
         outputDir: outDir,
-        variants: { android: false, favicon: false, splash: false, icon: false },
+        variants: {
+          android: false,
+          favicon: false,
+          splash: false,
+          icon: false,
+        },
         bgColor: '#FFFFFF',
       }),
     ).rejects.toThrow('Source not found');
@@ -134,10 +160,18 @@ describe('generate', () => {
     });
 
     expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.icon))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidForeground))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidBackground))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.androidMonochrome))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.splashIcon))).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidForeground)),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidBackground)),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidMonochrome)),
+    ).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.splashIcon))).toBe(
+      true,
+    );
     expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.favicon))).toBe(false);
 
     // Verify the composed icon is 1024x1024
@@ -173,7 +207,9 @@ describe('generate', () => {
     expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(false);
     expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(false);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(false);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-foreground.png')),
+    ).toBe(false);
   });
 
   it('generates only splash when --splash flag set', async () => {
@@ -189,7 +225,9 @@ describe('generate', () => {
     expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(false);
     expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(false);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(false);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-foreground.png')),
+    ).toBe(false);
   });
 
   it('generates multiple variants when multiple flags set', async () => {
@@ -202,9 +240,15 @@ describe('generate', () => {
       bgColor: '#FFFFFF',
     });
 
-    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-background.png'))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-monochrome.png'))).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-foreground.png')),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-background.png')),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-monochrome.png')),
+    ).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(false);
     expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(false);
@@ -220,12 +264,16 @@ describe('generate', () => {
       bgColor: '#FF0000',
     });
 
-    expect(fs.existsSync(path.join(outDir, 'android-icon-background.png'))).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-background.png')),
+    ).toBe(true);
 
-    const { channels } = await sharp(path.join(outDir, 'android-icon-background.png')).stats();
+    const { channels } = await sharp(
+      path.join(outDir, 'android-icon-background.png'),
+    ).stats();
     expect(channels[0].mean).toBeCloseTo(255, -1); // Red
-    expect(channels[1].mean).toBeCloseTo(0, -1);   // Green
-    expect(channels[2].mean).toBeCloseTo(0, -1);   // Blue
+    expect(channels[1].mean).toBeCloseTo(0, -1); // Green
+    expect(channels[2].mean).toBeCloseTo(0, -1); // Blue
   });
 
   it('cleans up temp composed image from .icon folder', async () => {
@@ -248,7 +296,9 @@ describe('generate', () => {
     const composeDirsAfter = fs
       .readdirSync(os.tmpdir())
       .filter((d) => d.startsWith('iconwolf-compose-'));
-    expect(composeDirsAfter.length).toBeLessThanOrEqual(composeDirsBefore.length);
+    expect(composeDirsAfter.length).toBeLessThanOrEqual(
+      composeDirsBefore.length,
+    );
 
     expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(true);
   });
@@ -262,7 +312,12 @@ describe('generate', () => {
       generate({
         inputPath: fakeDir,
         outputDir: path.join(tmpDir, 'err-out'),
-        variants: { android: false, favicon: false, splash: false, icon: false },
+        variants: {
+          android: false,
+          favicon: false,
+          splash: false,
+          icon: false,
+        },
         bgColor: '#FFFFFF',
       }),
     ).rejects.toThrow();
@@ -281,7 +336,9 @@ describe('generate', () => {
     const faviconPath = path.join(outDir, 'favicon.png');
     expect(fs.existsSync(faviconPath)).toBe(true);
 
-    const { data, info } = await sharp(faviconPath).raw().toBuffer({ resolveWithObject: true });
+    const { data, info } = await sharp(faviconPath)
+      .raw()
+      .toBuffer({ resolveWithObject: true });
 
     // Top-left corner should be transparent (rounded)
     expect(data[3]).toBe(0); // alpha of pixel (0,0)

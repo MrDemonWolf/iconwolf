@@ -77,7 +77,10 @@ async function createMockIconFolder(
     ],
   };
 
-  fs.writeFileSync(path.join(iconDir, 'icon.json'), JSON.stringify(manifest, null, 2));
+  fs.writeFileSync(
+    path.join(iconDir, 'icon.json'),
+    JSON.stringify(manifest, null, 2),
+  );
 
   return iconDir;
 }
@@ -107,7 +110,9 @@ describe('isIconComposerFolder', () => {
 
 describe('renderIconComposerFolder', () => {
   it('renders a gradient .icon folder to 1024x1024 PNG', async () => {
-    const iconDir = await createMockIconFolder(path.join(tmpDir, 'render-gradient'));
+    const iconDir = await createMockIconFolder(
+      path.join(tmpDir, 'render-gradient'),
+    );
     const result = await renderIconComposerFolder(iconDir);
 
     expect(fs.existsSync(result.composedImagePath)).toBe(true);
@@ -118,7 +123,10 @@ describe('renderIconComposerFolder', () => {
     expect(meta.format).toBe('png');
 
     // Clean up temp file
-    fs.rmSync(path.dirname(result.composedImagePath), { recursive: true, force: true });
+    fs.rmSync(path.dirname(result.composedImagePath), {
+      recursive: true,
+      force: true,
+    });
   });
 
   it('extracts background color from gradient', async () => {
@@ -128,13 +136,19 @@ describe('renderIconComposerFolder', () => {
     // First gradient stop: display-p3:0.00000,0.67451,0.92941 → #00ACED
     expect(result.extractedBgColor).toBe('#00ACED');
 
-    fs.rmSync(path.dirname(result.composedImagePath), { recursive: true, force: true });
+    fs.rmSync(path.dirname(result.composedImagePath), {
+      recursive: true,
+      force: true,
+    });
   });
 
   it('handles solid fill', async () => {
-    const iconDir = await createMockIconFolder(path.join(tmpDir, 'render-solid'), {
-      solidFill: true,
-    });
+    const iconDir = await createMockIconFolder(
+      path.join(tmpDir, 'render-solid'),
+      {
+        solidFill: true,
+      },
+    );
     const result = await renderIconComposerFolder(iconDir);
 
     expect(result.extractedBgColor).toBe('#FF0000');
@@ -143,18 +157,27 @@ describe('renderIconComposerFolder', () => {
     expect(meta.width).toBe(1024);
     expect(meta.height).toBe(1024);
 
-    fs.rmSync(path.dirname(result.composedImagePath), { recursive: true, force: true });
+    fs.rmSync(path.dirname(result.composedImagePath), {
+      recursive: true,
+      force: true,
+    });
   });
 
   it('falls back to white when no fill specified', async () => {
-    const iconDir = await createMockIconFolder(path.join(tmpDir, 'render-nofill'), {
-      noFill: true,
-    });
+    const iconDir = await createMockIconFolder(
+      path.join(tmpDir, 'render-nofill'),
+      {
+        noFill: true,
+      },
+    );
     const result = await renderIconComposerFolder(iconDir);
 
     expect(result.extractedBgColor).toBe('#FFFFFF');
 
-    fs.rmSync(path.dirname(result.composedImagePath), { recursive: true, force: true });
+    fs.rmSync(path.dirname(result.composedImagePath), {
+      recursive: true,
+      force: true,
+    });
   });
 
   it('throws on missing layer image', async () => {
@@ -178,6 +201,8 @@ describe('renderIconComposerFolder', () => {
       }),
     );
 
-    await expect(renderIconComposerFolder(iconDir)).rejects.toThrow('Layer image not found');
+    await expect(renderIconComposerFolder(iconDir)).rejects.toThrow(
+      'Layer image not found',
+    );
   });
 });

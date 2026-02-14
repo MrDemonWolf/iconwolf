@@ -56,9 +56,15 @@ describe('CLI end-to-end', () => {
     runCli(`${testPng} -o ${outDir}`);
 
     expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-foreground.png'))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-background.png'))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, 'android-icon-monochrome.png'))).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-foreground.png')),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-background.png')),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, 'android-icon-monochrome.png')),
+    ).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(true);
     expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(false);
   });

@@ -62,18 +62,30 @@ describe('validateSourceImage', () => {
   it('rejects non-square images', async () => {
     const rectPng = path.join(tmpDir, 'rect.png');
     await sharp({
-      create: { width: 1024, height: 512, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 255 } },
+      create: {
+        width: 1024,
+        height: 512,
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 255 },
+      },
     })
       .png()
       .toFile(rectPng);
 
-    await expect(validateSourceImage(rectPng)).rejects.toThrow('must be square');
+    await expect(validateSourceImage(rectPng)).rejects.toThrow(
+      'must be square',
+    );
   });
 
   it('rejects non-PNG formats', async () => {
     const jpgFile = path.join(tmpDir, 'test.jpg');
     await sharp({
-      create: { width: 100, height: 100, channels: 3, background: { r: 0, g: 0, b: 0 } },
+      create: {
+        width: 100,
+        height: 100,
+        channels: 3,
+        background: { r: 0, g: 0, b: 0 },
+      },
     })
       .jpeg()
       .toFile(jpgFile);
@@ -146,7 +158,12 @@ describe('createMonochromeIcon', () => {
 describe('applyRoundedCorners', () => {
   it('returns a PNG buffer with alpha channel', async () => {
     const input = await sharp({
-      create: { width: 48, height: 48, channels: 4, background: { r: 255, g: 0, b: 0, alpha: 255 } },
+      create: {
+        width: 48,
+        height: 48,
+        channels: 4,
+        background: { r: 255, g: 0, b: 0, alpha: 255 },
+      },
     })
       .png()
       .toBuffer();
@@ -162,20 +179,29 @@ describe('applyRoundedCorners', () => {
 
   it('produces transparent corners', async () => {
     const input = await sharp({
-      create: { width: 100, height: 100, channels: 4, background: { r: 255, g: 0, b: 0, alpha: 255 } },
+      create: {
+        width: 100,
+        height: 100,
+        channels: 4,
+        background: { r: 255, g: 0, b: 0, alpha: 255 },
+      },
     })
       .png()
       .toBuffer();
 
     const result = await applyRoundedCorners(input, 100);
-    const { data, info } = await sharp(result).raw().toBuffer({ resolveWithObject: true });
+    const { data, info } = await sharp(result)
+      .raw()
+      .toBuffer({ resolveWithObject: true });
 
     // Top-left corner pixel (0,0) should be transparent due to rounding
     const topLeftAlpha = data[3]; // RGBA, alpha is at index 3
     expect(topLeftAlpha).toBe(0);
 
     // Center pixel should be fully opaque
-    const centerIdx = (Math.floor(info.height / 2) * info.width + Math.floor(info.width / 2)) * 4;
+    const centerIdx =
+      (Math.floor(info.height / 2) * info.width + Math.floor(info.width / 2)) *
+      4;
     expect(data[centerIdx + 3]).toBe(255);
   });
 });

@@ -8,9 +8,6 @@ import {
   refreshCacheInBackground,
 } from '../../src/utils/update-notifier.js';
 
-const CACHE_DIR = path.join(os.homedir(), '.iconwolf');
-const CACHE_FILE = path.join(CACHE_DIR, 'update-check.json');
-
 describe('isNewerVersion', () => {
   it('returns true when latest patch is newer', () => {
     expect(isNewerVersion('0.0.6', '0.0.7')).toBe(true);

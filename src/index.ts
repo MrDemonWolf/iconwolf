@@ -54,7 +54,10 @@ program
       await generate(options);
 
       if (updateInfo?.updateAvailable) {
-        logger.updateNotice(updateInfo.currentVersion, updateInfo.latestVersion);
+        logger.updateNotice(
+          updateInfo.currentVersion,
+          updateInfo.latestVersion,
+        );
       }
     } catch (err) {
       logger.error(err instanceof Error ? err.message : String(err));
