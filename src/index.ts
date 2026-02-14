@@ -10,7 +10,7 @@ import {
 } from './utils/update-notifier.js';
 import type { GeneratorOptions } from './types.js';
 
-const VERSION = '0.0.6';
+const VERSION = '0.0.7';
 
 const program = new Command();
 
