@@ -30,9 +30,9 @@ describe('paths', () => {
 
   it('OUTPUT_FILES contains all expected file names', () => {
     expect(OUTPUT_FILES.icon).toBe('icon.png');
-    expect(OUTPUT_FILES.androidForeground).toBe('android-icon-foreground.png');
+    expect(OUTPUT_FILES.androidForeground).toBe('adaptive-icon.png');
     expect(OUTPUT_FILES.androidBackground).toBe('android-icon-background.png');
-    expect(OUTPUT_FILES.androidMonochrome).toBe('android-icon-monochrome.png');
+    expect(OUTPUT_FILES.androidMonochrome).toBe('monochrome-icon.png');
     expect(OUTPUT_FILES.favicon).toBe('favicon.png');
     expect(OUTPUT_FILES.splashIcon).toBe('splash-icon.png');
   });

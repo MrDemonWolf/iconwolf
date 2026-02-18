@@ -13,6 +13,33 @@ import { generateSplashIcon } from './variants/splash.js';
 import { generateAndroidIcons } from './variants/android.js';
 import type { GeneratorOptions, GenerationResult } from './types.js';
 
+interface ResolvedInput {
+  inputPath: string;
+  cleanupPath?: string;
+  bgColor: string;
+}
+
+async function resolveInput(
+  resolvedPath: string,
+  bgColor: string,
+): Promise<ResolvedInput> {
+  if (isIconComposerFolder(resolvedPath)) {
+    logger.info(`Apple Icon Composer file: ${resolvedPath}`);
+    const result = await renderIconComposerFolder(resolvedPath);
+    const inputPath = result.composedImagePath;
+    const cleanupPath = path.dirname(result.composedImagePath);
+
+    if (bgColor === '#FFFFFF') {
+      bgColor = result.extractedBgColor;
+      logger.info(`Extracted background color: ${bgColor}`);
+    }
+
+    return { inputPath, cleanupPath, bgColor };
+  }
+
+  return { inputPath: resolvedPath, bgColor };
+}
+
 export async function generate(options: GeneratorOptions): Promise<void> {
   const resolvedInput = path.resolve(options.inputPath);
   const outputDir = path.resolve(options.outputDir || DEFAULT_OUTPUT_DIR);
@@ -28,22 +55,25 @@ export async function generate(options: GeneratorOptions): Promise<void> {
 
   let inputPath: string;
   let cleanupPath: string | undefined;
+  let splashPath: string | undefined;
+  let splashCleanupPath: string | undefined;
 
   try {
-    // Apple Icon Composer .icon folder (primary input format)
-    if (isIconComposerFolder(resolvedInput)) {
-      logger.info(`Apple Icon Composer file: ${resolvedInput}`);
-      const result = await renderIconComposerFolder(resolvedInput);
-      inputPath = result.composedImagePath;
-      cleanupPath = path.dirname(result.composedImagePath);
+    // Resolve main input (Apple Icon Composer .icon folder or PNG)
+    const mainInput = await resolveInput(resolvedInput, bgColor);
+    inputPath = mainInput.inputPath;
+    cleanupPath = mainInput.cleanupPath;
+    bgColor = mainInput.bgColor;
 
-      // Use extracted bg color unless the user explicitly provided one
-      if (bgColor === '#FFFFFF') {
-        bgColor = result.extractedBgColor;
-        logger.info(`Extracted background color: ${bgColor}`);
+    // Resolve splash input if provided
+    if (options.splashInputPath) {
+      const resolvedSplashInput = path.resolve(options.splashInputPath);
+      if (!fs.existsSync(resolvedSplashInput)) {
+        throw new Error(`Splash source not found: ${resolvedSplashInput}`);
       }
-    } else {
-      inputPath = resolvedInput;
+      const splashInput = await resolveInput(resolvedSplashInput, bgColor);
+      splashPath = splashInput.inputPath;
+      splashCleanupPath = splashInput.cleanupPath;
     }
 
     // Validate source image
@@ -52,6 +82,15 @@ export async function generate(options: GeneratorOptions): Promise<void> {
     logger.info(
       `Source: ${meta.width}x${meta.height} ${meta.format.toUpperCase()}`,
     );
+
+    // Validate splash source image if separate
+    if (splashPath) {
+      logger.info(`Validating splash source image: ${splashPath}`);
+      const splashMeta = await validateSourceImage(splashPath);
+      logger.info(
+        `Splash source: ${splashMeta.width}x${splashMeta.height} ${splashMeta.format.toUpperCase()}`,
+      );
+    }
 
     // Create output directory
     fs.mkdirSync(outputDir, { recursive: true });
@@ -76,6 +115,7 @@ export async function generate(options: GeneratorOptions): Promise<void> {
         inputPath,
         outputDir,
         bgColor,
+        { includeBackground: variants.android },
       );
       for (const result of androidResults) {
         results.push(result);
@@ -83,23 +123,29 @@ export async function generate(options: GeneratorOptions): Promise<void> {
       }
     }
 
-    if (variants.favicon) {
+    if (generateAll || variants.favicon) {
       const result = await generateFavicon(inputPath, outputDir);
       results.push(result);
       logger.generated(result);
     }
 
     if (generateAll || variants.splash) {
-      const result = await generateSplashIcon(inputPath, outputDir);
+      const result = await generateSplashIcon(
+        splashPath || inputPath,
+        outputDir,
+      );
       results.push(result);
       logger.generated(result);
     }
 
     logger.summary(results);
   } finally {
-    // Clean up temp composed image
+    // Clean up temp composed images
     if (cleanupPath) {
       fs.rmSync(cleanupPath, { recursive: true, force: true });
+    }
+    if (splashCleanupPath) {
+      fs.rmSync(splashCleanupPath, { recursive: true, force: true });
     }
   }
 }

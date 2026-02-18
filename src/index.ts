@@ -10,7 +10,7 @@ import {
 } from './utils/update-notifier.js';
 import type { GeneratorOptions } from './types.js';
 
-const VERSION = '0.0.7';
+const VERSION = '0.1.0';
 
 const program = new Command();
 
@@ -30,6 +30,10 @@ program
   .option('--splash', 'Generate splash screen icon only')
   .option('--icon', 'Generate standard icon.png only')
   .option(
+    '--splash-input <path>',
+    'Use a separate image for the splash screen icon',
+  )
+  .option(
     '--bg-color <hex>',
     'Background color for Android adaptive icon',
     '#FFFFFF',
@@ -48,6 +52,7 @@ program
         icon: opts.icon ?? false,
       },
       bgColor: opts.bgColor,
+      splashInputPath: opts.splashInput,
     };
 
     try {

@@ -7,10 +7,11 @@ export async function createTestPng(
   width: number,
   height: number,
   dir?: string,
+  filename?: string,
 ): Promise<string> {
   const tmpDir =
     dir ?? fs.mkdtempSync(path.join(os.tmpdir(), 'iconwolf-test-'));
-  const filePath = path.join(tmpDir, 'test-icon.png');
+  const filePath = path.join(tmpDir, filename ?? 'test-icon.png');
 
   await sharp({
     create: {

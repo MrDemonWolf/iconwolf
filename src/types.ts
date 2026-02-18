@@ -10,6 +10,7 @@ export interface GeneratorOptions {
   outputDir: string;
   variants: VariantFlags;
   bgColor: string;
+  splashInputPath?: string;
 }
 
 export interface GenerationResult {

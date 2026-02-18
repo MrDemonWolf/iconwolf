@@ -12,13 +12,23 @@ export async function generateAndroidIcons(
   inputPath: string,
   outputDir: string,
   bgColor: string,
+  options?: { includeBackground?: boolean },
 ): Promise<GenerationResult[]> {
+  const includeBackground = options?.includeBackground ?? false;
+
+  const foregroundPromise = createAdaptiveForeground(
+    inputPath,
+    ANDROID_ICON_SIZE,
+    resolveOutputPath(outputDir, OUTPUT_FILES.androidForeground),
+  );
+
+  if (!includeBackground) {
+    const foreground = await foregroundPromise;
+    return [foreground];
+  }
+
   const [foreground, background, monochrome] = await Promise.all([
-    createAdaptiveForeground(
-      inputPath,
-      ANDROID_ICON_SIZE,
-      resolveOutputPath(outputDir, OUTPUT_FILES.androidForeground),
-    ),
+    foregroundPromise,
     createSolidBackground(
       bgColor,
       ANDROID_ICON_SIZE,
