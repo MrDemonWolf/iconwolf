@@ -3,3 +3,6 @@ dist/
 dist-bin/
 .DS_Store
 *.tgz
+
+# Claude Code
+.claude
