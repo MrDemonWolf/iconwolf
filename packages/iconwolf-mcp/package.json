@@ -1,0 +1,47 @@
+{
+  "name": "@mrdemonwolf/iconwolf-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for AI-driven app icon generation using iconwolf",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "iconwolf-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src/ tests/",
+    "format": "prettier --write src/ tests/",
+    "format:check": "prettier --check src/ tests/",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "iconwolf",
+    "icon-generator",
+    "ai"
+  ],
+  "author": "MrDemonWolf",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "iconwolf": "workspace:*",
+    "zod": "^3.25.36"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^22.13.1",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "eslint": "^9.19.0",
+    "prettier": "^3.4.2",
+    "sharp": "^0.33.5",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.55.0",
+    "vitest": "^3.0.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

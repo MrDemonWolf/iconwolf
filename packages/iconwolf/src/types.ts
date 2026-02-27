@@ -11,6 +11,7 @@ export interface GeneratorOptions {
   variants: VariantFlags;
   bgColor: string;
   splashInputPath?: string;
+  silent?: boolean;
 }
 
 export interface GenerationResult {

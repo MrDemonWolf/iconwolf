@@ -1,0 +1,59 @@
+import { z } from 'zod';
+
+export const generateIconsSchema = z.object({
+  file_path: z
+    .string()
+    .optional()
+    .describe('Absolute path to a local PNG file or .icon folder'),
+  base64_image: z.string().optional().describe('Base64-encoded PNG image data'),
+  output_dir: z.string().optional().describe('Output directory path'),
+  bg_color: z
+    .string()
+    .default('#FFFFFF')
+    .describe('Background color for Android adaptive icon (hex)'),
+  splash_input_path: z
+    .string()
+    .optional()
+    .describe('Separate image path for splash screen (PNG or .icon folder)'),
+  variants: z
+    .object({
+      icon: z.boolean().default(false),
+      android: z.boolean().default(false),
+      favicon: z.boolean().default(false),
+      splash: z.boolean().default(false),
+    })
+    .optional()
+    .describe(
+      'Which variants to generate. If omitted, generates all default variants.',
+    ),
+});
+
+export const generateSingleSchema = z.object({
+  file_path: z
+    .string()
+    .optional()
+    .describe('Absolute path to a local PNG file or .icon folder'),
+  base64_image: z.string().optional().describe('Base64-encoded PNG image data'),
+  output_dir: z.string().optional().describe('Output directory path'),
+});
+
+export const generateAndroidSchema = z.object({
+  file_path: z
+    .string()
+    .optional()
+    .describe('Absolute path to a local PNG file or .icon folder'),
+  base64_image: z.string().optional().describe('Base64-encoded PNG image data'),
+  output_dir: z.string().optional().describe('Output directory path'),
+  bg_color: z
+    .string()
+    .default('#FFFFFF')
+    .describe('Background color for adaptive icon (hex)'),
+  include_background: z
+    .boolean()
+    .default(true)
+    .describe('Include background and monochrome variants'),
+});
+
+export type GenerateIconsInput = z.infer<typeof generateIconsSchema>;
+export type GenerateSingleInput = z.infer<typeof generateSingleSchema>;
+export type GenerateAndroidInput = z.infer<typeof generateAndroidSchema>;

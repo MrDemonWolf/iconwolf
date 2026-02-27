@@ -22,16 +22,17 @@ interface ResolvedInput {
 async function resolveInput(
   resolvedPath: string,
   bgColor: string,
+  silent: boolean,
 ): Promise<ResolvedInput> {
   if (isIconComposerFolder(resolvedPath)) {
-    logger.info(`Apple Icon Composer file: ${resolvedPath}`);
+    if (!silent) logger.info(`Apple Icon Composer file: ${resolvedPath}`);
     const result = await renderIconComposerFolder(resolvedPath);
     const inputPath = result.composedImagePath;
     const cleanupPath = path.dirname(result.composedImagePath);
 
     if (bgColor === '#FFFFFF') {
       bgColor = result.extractedBgColor;
-      logger.info(`Extracted background color: ${bgColor}`);
+      if (!silent) logger.info(`Extracted background color: ${bgColor}`);
     }
 
     return { inputPath, cleanupPath, bgColor };
@@ -40,13 +41,16 @@ async function resolveInput(
   return { inputPath: resolvedPath, bgColor };
 }
 
-export async function generate(options: GeneratorOptions): Promise<void> {
+export async function generate(
+  options: GeneratorOptions,
+): Promise<GenerationResult[]> {
   const resolvedInput = path.resolve(options.inputPath);
   const outputDir = path.resolve(options.outputDir || DEFAULT_OUTPUT_DIR);
   let { bgColor } = options;
   const { variants } = options;
+  const silent = options.silent ?? false;
 
-  logger.banner();
+  if (!silent) logger.banner();
 
   // Check source exists
   if (!fs.existsSync(resolvedInput)) {
@@ -60,7 +64,7 @@ export async function generate(options: GeneratorOptions): Promise<void> {
 
   try {
     // Resolve main input (Apple Icon Composer .icon folder or PNG)
-    const mainInput = await resolveInput(resolvedInput, bgColor);
+    const mainInput = await resolveInput(resolvedInput, bgColor, silent);
     inputPath = mainInput.inputPath;
     cleanupPath = mainInput.cleanupPath;
     bgColor = mainInput.bgColor;
@@ -71,30 +75,36 @@ export async function generate(options: GeneratorOptions): Promise<void> {
       if (!fs.existsSync(resolvedSplashInput)) {
         throw new Error(`Splash source not found: ${resolvedSplashInput}`);
       }
-      const splashInput = await resolveInput(resolvedSplashInput, bgColor);
+      const splashInput = await resolveInput(
+        resolvedSplashInput,
+        bgColor,
+        silent,
+      );
       splashPath = splashInput.inputPath;
       splashCleanupPath = splashInput.cleanupPath;
     }
 
     // Validate source image
-    logger.info(`Validating source image: ${inputPath}`);
+    if (!silent) logger.info(`Validating source image: ${inputPath}`);
     const meta = await validateSourceImage(inputPath);
-    logger.info(
-      `Source: ${meta.width}x${meta.height} ${meta.format.toUpperCase()}`,
-    );
+    if (!silent)
+      logger.info(
+        `Source: ${meta.width}x${meta.height} ${meta.format.toUpperCase()}`,
+      );
 
     // Validate splash source image if separate
     if (splashPath) {
-      logger.info(`Validating splash source image: ${splashPath}`);
+      if (!silent) logger.info(`Validating splash source image: ${splashPath}`);
       const splashMeta = await validateSourceImage(splashPath);
-      logger.info(
-        `Splash source: ${splashMeta.width}x${splashMeta.height} ${splashMeta.format.toUpperCase()}`,
-      );
+      if (!silent)
+        logger.info(
+          `Splash source: ${splashMeta.width}x${splashMeta.height} ${splashMeta.format.toUpperCase()}`,
+        );
     }
 
     // Create output directory
     fs.mkdirSync(outputDir, { recursive: true });
-    logger.info(`Output directory: ${outputDir}`);
+    if (!silent) logger.info(`Output directory: ${outputDir}`);
 
     // Determine which variants to generate
     const anyFlagSet =
@@ -107,7 +117,7 @@ export async function generate(options: GeneratorOptions): Promise<void> {
     if (generateAll || variants.icon) {
       const result = await generateStandardIcon(inputPath, outputDir);
       results.push(result);
-      logger.generated(result);
+      if (!silent) logger.generated(result);
     }
 
     if (generateAll || variants.android) {
@@ -119,14 +129,14 @@ export async function generate(options: GeneratorOptions): Promise<void> {
       );
       for (const result of androidResults) {
         results.push(result);
-        logger.generated(result);
+        if (!silent) logger.generated(result);
       }
     }
 
     if (generateAll || variants.favicon) {
       const result = await generateFavicon(inputPath, outputDir);
       results.push(result);
-      logger.generated(result);
+      if (!silent) logger.generated(result);
     }
 
     if (generateAll || variants.splash) {
@@ -135,10 +145,12 @@ export async function generate(options: GeneratorOptions): Promise<void> {
         outputDir,
       );
       results.push(result);
-      logger.generated(result);
+      if (!silent) logger.generated(result);
     }
 
-    logger.summary(results);
+    if (!silent) logger.summary(results);
+
+    return results;
   } finally {
     // Clean up temp composed images
     if (cleanupPath) {

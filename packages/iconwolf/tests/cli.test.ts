@@ -64,9 +64,7 @@ describe('CLI end-to-end', () => {
     expect(
       fs.existsSync(path.join(outDir, 'android-icon-background.png')),
     ).toBe(false);
-    expect(fs.existsSync(path.join(outDir, 'monochrome-icon.png'))).toBe(
-      false,
-    );
+    expect(fs.existsSync(path.join(outDir, 'monochrome-icon.png'))).toBe(false);
   });
 
   it('exits with error on missing input file', () => {

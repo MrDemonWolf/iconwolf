@@ -20,6 +20,7 @@ jobs:
       - run: pnpm install
 
       - name: Build release
+        working-directory: packages/iconwolf
         run: bash scripts/build-release.sh macos-arm64
 
       - name: Upload release asset
@@ -27,5 +28,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload "${{ github.ref_name }}" \
-            dist-bin/iconwolf-macos-arm64.tar.gz \
+            packages/iconwolf/dist-bin/iconwolf-macos-arm64.tar.gz \
             --clobber
