@@ -1,3 +1,15 @@
+export type BannerPosition =
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right';
+
+export interface BannerOptions {
+  text: string;
+  color?: string;
+  position?: BannerPosition;
+}
+
 export interface VariantFlags {
   android: boolean;
   favicon: boolean;
@@ -11,6 +23,7 @@ export interface GeneratorOptions {
   variants: VariantFlags;
   bgColor: string;
   splashInputPath?: string;
+  banner?: BannerOptions;
   silent?: boolean;
 }
 

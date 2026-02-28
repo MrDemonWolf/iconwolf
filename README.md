@@ -32,6 +32,9 @@ One icon to rule them all.
   the variants you need.
 - **Custom Background Color** - Override the Android adaptive
   icon background color via `--bg-color`.
+- **Dev/Preview Banners** - Add diagonal ribbon banners (DEV,
+  BETA, STAGING, etc.) to distinguish app environments. Auto
+  color-coded with customizable position.
 - **Update Notifier** - Non-blocking version check against
   GitHub Releases with a 24-hour cached TTL. Zero latency
   impact on icon generation.
@@ -86,6 +89,9 @@ iconwolf <input> [options]
 | `--icon`                  | Generate standard icon.png only                         |
 | `--splash-input <path>`   | Use a separate image for the splash screen icon         |
 | `--bg-color <hex>`        | Background color for Android adaptive icon (`#FFFFFF`)  |
+| `--banner <text>`         | Diagonal ribbon banner (e.g. DEV, BETA, STAGING)        |
+| `--banner-color <hex>`    | Ribbon color (default: auto from text)                  |
+| `--banner-position <pos>` | `top-left`, `top-right`, `bottom-left`, `bottom-right`  |
 | `-h, --help`              | Display help                                            |
 | `-V, --version`           | Display version                                         |
 
@@ -115,6 +121,12 @@ iconwolf AppIcon.icon --icon
 
 # Override the Android adaptive icon background color
 iconwolf AppIcon.icon --android --bg-color "#1A1A2E"
+
+# Add a DEV ribbon banner to all icons (auto green color)
+iconwolf AppIcon.icon --banner DEV
+
+# Add a BETA banner with custom color in the top-right corner
+iconwolf AppIcon.icon --banner BETA --banner-color "#FF5722" --banner-position top-right
 ```
 
 ### Output Files

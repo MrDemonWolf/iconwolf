@@ -11,6 +11,7 @@ import { generateStandardIcon } from './variants/standard.js';
 import { generateFavicon } from './variants/favicon.js';
 import { generateSplashIcon } from './variants/splash.js';
 import { generateAndroidIcons } from './variants/android.js';
+import { applyBanner, shouldApplyBanner } from './utils/banner.js';
 import type { GeneratorOptions, GenerationResult } from './types.js';
 
 interface ResolvedInput {
@@ -146,6 +147,15 @@ export async function generate(
       );
       results.push(result);
       if (!silent) logger.generated(result);
+    }
+
+    // Apply banner overlay if requested
+    if (options.banner) {
+      for (const result of results) {
+        if (shouldApplyBanner(result.filePath)) {
+          await applyBanner(result, options.banner);
+        }
+      }
     }
 
     if (!silent) logger.summary(results);

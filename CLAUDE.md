@@ -38,6 +38,7 @@ packages/iconwolf/          # Core CLI package
     generator.ts            # Orchestrator: detects .icon vs PNG, dispatches to variant generators
     types.ts                # Shared interfaces (VariantFlags, GeneratorOptions, GenerationResult)
     utils/
+      banner.ts             # Diagonal ribbon banner SVG generation and compositing
       icon-composer.ts      # Apple Icon Composer .icon folder parser and renderer
       image.ts              # Sharp operations (resize, adaptive foreground, solid bg, monochrome, rounded corners, hex parsing)
       paths.ts              # Output file name constants, resolveOutputPath(), resolveDefaultOutputDir()

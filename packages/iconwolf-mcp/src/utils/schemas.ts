@@ -1,5 +1,20 @@
 import { z } from 'zod';
 
+const bannerSchema = z
+  .object({
+    text: z.string().describe('Banner text (e.g. DEV, BETA, STAGING)'),
+    color: z
+      .string()
+      .optional()
+      .describe('Ribbon color hex (default: auto from text)'),
+    position: z
+      .enum(['top-left', 'top-right', 'bottom-left', 'bottom-right'])
+      .optional()
+      .describe('Banner corner position (default: top-left)'),
+  })
+  .optional()
+  .describe('Diagonal ribbon banner overlay');
+
 export const generateIconsSchema = z.object({
   file_path: z
     .string()
@@ -26,6 +41,7 @@ export const generateIconsSchema = z.object({
     .describe(
       'Which variants to generate. If omitted, generates all default variants.',
     ),
+  banner: bannerSchema,
 });
 
 export const generateSingleSchema = z.object({
@@ -35,6 +51,7 @@ export const generateSingleSchema = z.object({
     .describe('Absolute path to a local PNG file or .icon folder'),
   base64_image: z.string().optional().describe('Base64-encoded PNG image data'),
   output_dir: z.string().optional().describe('Output directory path'),
+  banner: bannerSchema,
 });
 
 export const generateAndroidSchema = z.object({
@@ -52,6 +69,7 @@ export const generateAndroidSchema = z.object({
     .boolean()
     .default(true)
     .describe('Include background and monochrome variants'),
+  banner: bannerSchema,
 });
 
 export type GenerateIconsInput = z.infer<typeof generateIconsSchema>;

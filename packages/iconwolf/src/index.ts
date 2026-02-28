@@ -8,7 +8,7 @@ import {
   readCachedUpdateInfo,
   refreshCacheInBackground,
 } from './utils/update-notifier.js';
-import type { GeneratorOptions } from './types.js';
+import type { BannerPosition, GeneratorOptions } from './types.js';
 
 const VERSION = '0.1.0';
 
@@ -38,6 +38,16 @@ program
     'Background color for Android adaptive icon',
     '#FFFFFF',
   )
+  .option(
+    '--banner <text>',
+    'Diagonal ribbon banner text (e.g. DEV, BETA, STAGING)',
+  )
+  .option('--banner-color <hex>', 'Ribbon color (default: auto from text)')
+  .option(
+    '--banner-position <pos>',
+    'Banner position: top-left, top-right, bottom-left, bottom-right',
+    'top-left',
+  )
   .action(async (input: string, opts) => {
     const updateInfo = readCachedUpdateInfo(VERSION);
     refreshCacheInBackground().catch(() => {});
@@ -53,6 +63,13 @@ program
       },
       bgColor: opts.bgColor,
       splashInputPath: opts.splashInput,
+      banner: opts.banner
+        ? {
+            text: opts.banner,
+            color: opts.bannerColor,
+            position: opts.bannerPosition as BannerPosition,
+          }
+        : undefined,
     };
 
     try {

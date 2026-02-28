@@ -347,6 +347,52 @@ describe('generate', () => {
     expect(fs.existsSync(path.join(outDir, 'splash-icon.png'))).toBe(true);
   });
 
+  it('applies banner to icon, adaptive-icon, and splash but not favicon', async () => {
+    const outDir = path.join(tmpDir, 'banner-test');
+
+    const results = await generate({
+      inputPath: testPng,
+      outputDir: outDir,
+      variants: { android: false, favicon: false, splash: false, icon: false },
+      bgColor: '#FFFFFF',
+      banner: { text: 'DEV' },
+    });
+
+    // All 4 default files should exist
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.icon))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.favicon))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.splashIcon))).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidForeground)),
+    ).toBe(true);
+    expect(results.length).toBe(4);
+  });
+
+  it('skips banner on background and monochrome android variants', async () => {
+    const outDir = path.join(tmpDir, 'banner-android');
+
+    const results = await generate({
+      inputPath: testPng,
+      outputDir: outDir,
+      variants: { android: true, favicon: false, splash: false, icon: false },
+      bgColor: '#FFFFFF',
+      banner: { text: 'STAGING', color: '#2196F3' },
+    });
+
+    // adaptive-icon.png should exist (banner applied)
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidForeground)),
+    ).toBe(true);
+    // background and monochrome should exist (no banner)
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidBackground)),
+    ).toBe(true);
+    expect(
+      fs.existsSync(path.join(outDir, OUTPUT_FILES.androidMonochrome)),
+    ).toBe(true);
+    expect(results.length).toBe(3);
+  });
+
   it('throws on missing splash input file', async () => {
     const outDir = path.join(tmpDir, 'splash-missing');
 

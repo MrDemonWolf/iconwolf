@@ -40,6 +40,9 @@ describe('CLI end-to-end', () => {
     expect(output).toContain('--icon');
     expect(output).toContain('--splash-input');
     expect(output).toContain('--bg-color');
+    expect(output).toContain('--banner');
+    expect(output).toContain('--banner-color');
+    expect(output).toContain('--banner-position');
   });
 
   it('generates icon.png via CLI with --icon flag', () => {
@@ -71,6 +74,14 @@ describe('CLI end-to-end', () => {
     expect(() => {
       runCli('/tmp/nonexistent-icon.png -o /tmp/out');
     }).toThrow();
+  });
+
+  it('generates icon with --banner DEV flag', () => {
+    const outDir = path.join(tmpDir, 'cli-banner');
+
+    runCli(`${testPng} --icon --banner DEV -o ${outDir}`);
+
+    expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(true);
   });
 
   it('generates favicon when --favicon flag is used', () => {

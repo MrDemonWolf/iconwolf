@@ -3,6 +3,7 @@ import {
   validateSourceImage,
   isIconComposerFolder,
   renderIconComposerFolder,
+  applyBanner,
 } from '@mrdemonwolf/iconwolf';
 import {
   resolveInputPath,
@@ -33,6 +34,9 @@ export async function handleGenerateSplash(input: GenerateSingleInput) {
     await validateSourceImage(resolvedInput);
     fs.mkdirSync(outputDir, { recursive: true });
     const result = await generateSplashIcon(resolvedInput, outputDir);
+    if (input.banner) {
+      await applyBanner(result, input.banner);
+    }
     const base64 = readFileAsBase64(result.filePath);
 
     return {

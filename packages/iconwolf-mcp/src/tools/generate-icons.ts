@@ -29,6 +29,7 @@ export async function handleGenerateIcons(input: GenerateIconsInput) {
       variants,
       bgColor: input.bg_color,
       splashInputPath: input.splash_input_path,
+      banner: input.banner,
       silent: true,
     });
 

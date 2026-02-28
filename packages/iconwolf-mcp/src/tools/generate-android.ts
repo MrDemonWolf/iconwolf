@@ -3,6 +3,8 @@ import {
   validateSourceImage,
   isIconComposerFolder,
   renderIconComposerFolder,
+  applyBanner,
+  shouldApplyBanner,
 } from '@mrdemonwolf/iconwolf';
 import type { GenerationResult } from '@mrdemonwolf/iconwolf';
 import {
@@ -43,6 +45,14 @@ export async function handleGenerateAndroid(input: GenerateAndroidInput) {
       bgColor,
       { includeBackground: input.include_background },
     );
+
+    if (input.banner) {
+      for (const result of results) {
+        if (shouldApplyBanner(result.filePath)) {
+          await applyBanner(result, input.banner);
+        }
+      }
+    }
 
     return formatResults(results);
   } finally {
