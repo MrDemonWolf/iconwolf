@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-02-27
+
+### Fixed
+
+- `.icon` folders using `fill-specializations` format (newer Apple Icon Composer) now parse correctly instead of crashing
+
 ## [0.2.0] - 2026-02-27
 
 ### Added

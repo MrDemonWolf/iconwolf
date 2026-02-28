@@ -30,8 +30,14 @@ interface IconComposerGroup {
   translucency?: { enabled: boolean; value: number };
 }
 
+interface IconComposerFillSpecialization {
+  appearance?: string;
+  value: IconComposerFill;
+}
+
 interface IconComposerManifest {
-  fill: IconComposerFill;
+  fill?: IconComposerFill;
+  'fill-specializations'?: IconComposerFillSpecialization[];
   groups: IconComposerGroup[];
   'supported-platforms'?: unknown;
 }
@@ -196,9 +202,16 @@ export async function renderIconComposerFolder(
   const manifestRaw = fs.readFileSync(manifestPath, 'utf-8');
   const manifest: IconComposerManifest = JSON.parse(manifestRaw);
 
+  // Resolve fill: prefer top-level `fill`, fall back to first `fill-specializations` entry (light appearance)
+  const fill: IconComposerFill =
+    manifest.fill ??
+    manifest['fill-specializations']?.find((s) => !s.appearance)?.value ??
+    manifest['fill-specializations']?.[0]?.value ??
+    {};
+
   // Create background
   const { buffer: backgroundBuffer, bgColor: extractedBgColor } =
-    await createBackground(manifest.fill);
+    await createBackground(fill);
 
   // Build composite operations for each layer
   const compositeOps: sharp.OverlayOptions[] = [];

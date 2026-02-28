@@ -1,12 +1,12 @@
 class Iconwolf < Formula
   desc "Cross-platform app icon generator for Expo/React Native projects"
   homepage "https://github.com/MrDemonWolf/iconwolf"
-  version "0.2.0"
+  version "0.2.1"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/MrDemonWolf/iconwolf/releases/download/v0.2.0/iconwolf-macos-arm64.tar.gz"
+      url "https://github.com/MrDemonWolf/iconwolf/releases/download/v0.2.1/iconwolf-macos-arm64.tar.gz"
       sha256 "5a208e3f10f6b54d9c95a8a6af2d639222c0350a6f1829e580835bce1ea7c383"
     end
   end
@@ -41,6 +41,6 @@ class Iconwolf < Formula
   end
 
   test do
-    assert_match "0.2.0", shell_output("#{bin}/iconwolf --version")
+    assert_match "0.2.1", shell_output("#{bin}/iconwolf --version")
   end
 end
