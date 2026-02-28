@@ -7,7 +7,7 @@ class Iconwolf < Formula
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/MrDemonWolf/iconwolf/releases/download/v0.3.0/iconwolf-macos-arm64.tar.gz"
-      sha256 "PLACEHOLDER"
+      sha256 "e1496a7e38cb7d000a2341b68cfdb9f52a834848eb103b01dbe5e5288db1b742"
     end
   end
 
