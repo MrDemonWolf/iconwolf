@@ -60,7 +60,12 @@ describe('applyBanner', () => {
     const pngPath = await createTestPng(1024, 1024, tmpDir, 'banner-test.png');
     const originalSize = fs.statSync(pngPath).size;
 
-    const result = { filePath: pngPath, width: 1024, height: 1024, size: originalSize };
+    const result = {
+      filePath: pngPath,
+      width: 1024,
+      height: 1024,
+      size: originalSize,
+    };
 
     await applyBanner(result, { text: 'DEV' });
 
@@ -75,8 +80,18 @@ describe('applyBanner', () => {
   });
 
   it('uses custom color when provided', async () => {
-    const pngPath = await createTestPng(1024, 1024, tmpDir, 'banner-custom-color.png');
-    const result = { filePath: pngPath, width: 1024, height: 1024, size: fs.statSync(pngPath).size };
+    const pngPath = await createTestPng(
+      1024,
+      1024,
+      tmpDir,
+      'banner-custom-color.png',
+    );
+    const result = {
+      filePath: pngPath,
+      width: 1024,
+      height: 1024,
+      size: fs.statSync(pngPath).size,
+    };
 
     await applyBanner(result, { text: 'TEST', color: '#FF00FF' });
 
@@ -86,7 +101,12 @@ describe('applyBanner', () => {
 
   it('uses custom position', async () => {
     const pngPath = await createTestPng(1024, 1024, tmpDir, 'banner-pos.png');
-    const result = { filePath: pngPath, width: 1024, height: 1024, size: fs.statSync(pngPath).size };
+    const result = {
+      filePath: pngPath,
+      width: 1024,
+      height: 1024,
+      size: fs.statSync(pngPath).size,
+    };
 
     await applyBanner(result, { text: 'DEV', position: 'bottom-right' });
 

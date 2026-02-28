@@ -361,7 +361,9 @@ describe('generate', () => {
     // All 4 default files should exist
     expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.icon))).toBe(true);
     expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.favicon))).toBe(true);
-    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.splashIcon))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, OUTPUT_FILES.splashIcon))).toBe(
+      true,
+    );
     expect(
       fs.existsSync(path.join(outDir, OUTPUT_FILES.androidForeground)),
     ).toBe(true);

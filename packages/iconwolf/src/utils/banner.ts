@@ -1,7 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
-import type { BannerOptions, BannerPosition, GenerationResult } from '../types.js';
+import type {
+  BannerOptions,
+  BannerPosition,
+  GenerationResult,
+} from '../types.js';
 
 const DEFAULT_COLORS: Record<string, string> = {
   DEV: '#4CAF50',
