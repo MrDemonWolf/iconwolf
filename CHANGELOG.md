@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2026-02-27
+
+### Added
+
+- `--banner`, `--banner-color`, `--banner-position` CLI flags for diagonal ribbon banners
+- Banner support in MCP server tools (generate_icons, generate_icon, generate_splash, generate_android_icons)
+- `applyBanner()`, `createBannerSvg()`, `shouldApplyBanner()` library exports
+- MCP server documentation in README and dedicated package README
+
+### Fixed
+
+- Splash icon from `.icon` folders now renders with transparent background (foreground only)
+
+### Changed
+
+- npm install commands updated to scoped `@mrdemonwolf/iconwolf` package name
+
 ## [0.1.0] - 2026-02-17
 
 ### Breaking Changes
