@@ -22,6 +22,7 @@ export interface GeneratorOptions {
   outputDir: string;
   variants: VariantFlags;
   bgColor: string;
+  darkBgColor?: string;
   splashInputPath?: string;
   banner?: BannerOptions;
   silent?: boolean;

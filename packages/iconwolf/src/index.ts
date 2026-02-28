@@ -39,6 +39,10 @@ program
     '#FFFFFF',
   )
   .option(
+    '--dark-bg-color <hex>',
+    'Dark mode background color for .icon folder output',
+  )
+  .option(
     '--banner <text>',
     'Diagonal ribbon banner text (e.g. DEV, BETA, STAGING)',
   )
@@ -62,6 +66,7 @@ program
         icon: opts.icon ?? false,
       },
       bgColor: opts.bgColor,
+      darkBgColor: opts.darkBgColor,
       splashInputPath: opts.splashInput,
       banner: opts.banner
         ? {

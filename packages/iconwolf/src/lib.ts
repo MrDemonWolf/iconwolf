@@ -12,6 +12,8 @@ export {
 export {
   isIconComposerFolder,
   renderIconComposerFolder,
+  createIconComposerFolder,
+  hexToIconColor,
 } from './utils/icon-composer.js';
 export { OUTPUT_FILES, resolveOutputPath } from './utils/paths.js';
 export type {

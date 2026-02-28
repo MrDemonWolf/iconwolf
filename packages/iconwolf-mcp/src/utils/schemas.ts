@@ -72,6 +72,27 @@ export const generateAndroidSchema = z.object({
   banner: bannerSchema,
 });
 
+export const generateIconComposerSchema = z.object({
+  file_path: z
+    .string()
+    .optional()
+    .describe('Absolute path to a local PNG file'),
+  base64_image: z.string().optional().describe('Base64-encoded PNG image data'),
+  output_dir: z
+    .string()
+    .describe('Output path ending in .icon (e.g. AppIcon.icon)'),
+  bg_color: z.string().default('#FFFFFF').describe('Background color (hex)'),
+  dark_bg_color: z
+    .string()
+    .optional()
+    .describe(
+      'Dark mode background color (hex). When provided, generates fill-specializations with light + dark entries.',
+    ),
+});
+
 export type GenerateIconsInput = z.infer<typeof generateIconsSchema>;
 export type GenerateSingleInput = z.infer<typeof generateSingleSchema>;
 export type GenerateAndroidInput = z.infer<typeof generateAndroidSchema>;
+export type GenerateIconComposerInput = z.infer<
+  typeof generateIconComposerSchema
+>;

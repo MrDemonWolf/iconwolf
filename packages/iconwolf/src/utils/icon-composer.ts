@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import sharp from 'sharp';
+import type { GenerationResult } from '../types.js';
 
 const ICON_SIZE = 1024;
 
@@ -313,5 +314,104 @@ export async function renderIconComposerFolder(
     composedImagePath: composedPath,
     foregroundImagePath: foregroundPath,
     extractedBgColor,
+  };
+}
+
+/**
+ * Convert a hex color string (#RRGGBB or #RGB) to the sRGB format used in icon.json.
+ * Returns e.g. "srgb:0.03529,0.08235,0.20000,1.00000"
+ */
+export function hexToIconColor(hex: string): string {
+  const cleaned = hex.replace(/^#/, '');
+
+  let r: number, g: number, b: number;
+
+  if (cleaned.length === 3) {
+    r = parseInt(cleaned[0] + cleaned[0], 16);
+    g = parseInt(cleaned[1] + cleaned[1], 16);
+    b = parseInt(cleaned[2] + cleaned[2], 16);
+  } else if (cleaned.length === 6) {
+    r = parseInt(cleaned.slice(0, 2), 16);
+    g = parseInt(cleaned.slice(2, 4), 16);
+    b = parseInt(cleaned.slice(4, 6), 16);
+  } else {
+    throw new Error(`Invalid hex color: ${hex}. Use #RGB or #RRGGBB format.`);
+  }
+
+  if (isNaN(r) || isNaN(g) || isNaN(b)) {
+    throw new Error(`Invalid hex color: ${hex}. Contains non-hex characters.`);
+  }
+
+  const rf = (r / 255).toFixed(5);
+  const gf = (g / 255).toFixed(5);
+  const bf = (b / 255).toFixed(5);
+
+  return `srgb:${rf},${gf},${bf},1.00000`;
+}
+
+/**
+ * Create an Apple Icon Composer .icon folder from a PNG input.
+ * Generates the folder structure with icon.json manifest and Assets/ directory.
+ */
+export async function createIconComposerFolder(
+  inputPath: string,
+  outputPath: string,
+  options: { bgColor: string; darkBgColor?: string },
+): Promise<GenerationResult> {
+  const assetsDir = path.join(outputPath, 'Assets');
+  fs.mkdirSync(assetsDir, { recursive: true });
+
+  // Copy input PNG to Assets/foreground.png
+  const foregroundDest = path.join(assetsDir, 'foreground.png');
+  fs.copyFileSync(inputPath, foregroundDest);
+
+  // Build icon.json manifest
+  const lightColor = hexToIconColor(options.bgColor);
+
+  const group = {
+    layers: [
+      {
+        'image-name': 'foreground.png',
+        name: 'foreground',
+        position: {
+          scale: 1.0,
+          'translation-in-points': [0, 0] as [number, number],
+        },
+      },
+    ],
+  };
+
+  let manifest: Record<string, unknown>;
+
+  if (options.darkBgColor) {
+    const darkColor = hexToIconColor(options.darkBgColor);
+    manifest = {
+      'fill-specializations': [
+        { value: { solid: lightColor } },
+        { appearance: 'dark', value: { solid: darkColor } },
+      ],
+      groups: [group],
+      'supported-platforms': { squares: 'shared' },
+    };
+  } else {
+    manifest = {
+      fill: { solid: lightColor },
+      groups: [group],
+      'supported-platforms': { squares: 'shared' },
+    };
+  }
+
+  const manifestPath = path.join(outputPath, 'icon.json');
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+
+  // Calculate folder size
+  const foregroundSize = fs.statSync(foregroundDest).size;
+  const manifestSize = fs.statSync(manifestPath).size;
+
+  return {
+    filePath: outputPath,
+    width: ICON_SIZE,
+    height: ICON_SIZE,
+    size: foregroundSize + manifestSize,
   };
 }

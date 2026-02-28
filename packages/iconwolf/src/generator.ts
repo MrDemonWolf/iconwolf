@@ -3,6 +3,7 @@ import path from 'node:path';
 import {
   isIconComposerFolder,
   renderIconComposerFolder,
+  createIconComposerFolder,
 } from './utils/icon-composer.js';
 import { validateSourceImage } from './utils/image.js';
 import * as logger from './utils/logger.js';
@@ -58,6 +59,17 @@ export async function generate(
   // Check source exists
   if (!fs.existsSync(resolvedInput)) {
     throw new Error(`Source not found: ${resolvedInput}`);
+  }
+
+  // Generate .icon folder when output path ends with .icon
+  if (outputDir.endsWith('.icon')) {
+    const result = await createIconComposerFolder(resolvedInput, outputDir, {
+      bgColor,
+      darkBgColor: options.darkBgColor,
+    });
+    if (!silent) logger.generated(result);
+    if (!silent) logger.summary([result]);
+    return [result];
   }
 
   let inputPath: string;

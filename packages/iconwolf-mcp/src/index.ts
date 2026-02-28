@@ -6,16 +6,19 @@ import {
   generateIconsSchema,
   generateSingleSchema,
   generateAndroidSchema,
+  generateIconComposerSchema,
 } from './utils/schemas.js';
 import { handleGenerateIcons } from './tools/generate-icons.js';
 import { handleGenerateIcon } from './tools/generate-icon.js';
 import { handleGenerateFavicon } from './tools/generate-favicon.js';
 import { handleGenerateSplash } from './tools/generate-splash.js';
 import { handleGenerateAndroid } from './tools/generate-android.js';
+import { handleGenerateIconComposer } from './tools/generate-icon-composer.js';
 import type {
   GenerateIconsInput,
   GenerateSingleInput,
   GenerateAndroidInput,
+  GenerateIconComposerInput,
 } from './utils/schemas.js';
 
 const server = new McpServer({
@@ -108,6 +111,22 @@ server.tool(
     try {
       validateInput(input);
       return await handleGenerateAndroid(input as GenerateAndroidInput);
+    } catch (error) {
+      return errorResponse(error);
+    }
+  },
+);
+
+server.tool(
+  'generate_icon_composer',
+  'Generate an Apple Icon Composer .icon folder from a source PNG. Supports light and dark mode background colors for iOS 18+ dark/tinted icon variants.',
+  generateIconComposerSchema.shape,
+  async (input) => {
+    try {
+      validateInput(input);
+      return await handleGenerateIconComposer(
+        input as GenerateIconComposerInput,
+      );
     } catch (error) {
       return errorResponse(error);
     }

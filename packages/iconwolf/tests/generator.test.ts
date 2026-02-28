@@ -395,6 +395,50 @@ describe('generate', () => {
     expect(results.length).toBe(3);
   });
 
+  it('generates .icon folder when output path ends in .icon', async () => {
+    const outDir = path.join(tmpDir, 'Output.icon');
+
+    const results = await generate({
+      inputPath: testPng,
+      outputDir: outDir,
+      variants: { android: false, favicon: false, splash: false, icon: false },
+      bgColor: '#091533',
+      silent: true,
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0].filePath).toBe(outDir);
+    expect(results[0].width).toBe(1024);
+    expect(results[0].height).toBe(1024);
+    expect(fs.existsSync(path.join(outDir, 'icon.json'))).toBe(true);
+    expect(fs.existsSync(path.join(outDir, 'Assets', 'foreground.png'))).toBe(
+      true,
+    );
+
+    // Should NOT generate PNG variant files
+    expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(false);
+    expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(false);
+  });
+
+  it('generates .icon folder with dark mode when darkBgColor provided', async () => {
+    const outDir = path.join(tmpDir, 'DarkMode.icon');
+
+    await generate({
+      inputPath: testPng,
+      outputDir: outDir,
+      variants: { android: false, favicon: false, splash: false, icon: false },
+      bgColor: '#FFFFFF',
+      darkBgColor: '#000000',
+      silent: true,
+    });
+
+    const manifest = JSON.parse(
+      fs.readFileSync(path.join(outDir, 'icon.json'), 'utf-8'),
+    );
+    expect(manifest['fill-specializations']).toHaveLength(2);
+    expect(manifest['fill-specializations'][1].appearance).toBe('dark');
+  });
+
   it('throws on missing splash input file', async () => {
     const outDir = path.join(tmpDir, 'splash-missing');
 
