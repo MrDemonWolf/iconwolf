@@ -10,7 +10,7 @@ import {
 } from './utils/update-notifier.js';
 import type { BannerPosition, GeneratorOptions } from './types.js';
 
-const VERSION = '0.2.1';
+const VERSION = '0.3.0';
 
 const program = new Command();
 

@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-02-27
+
+### Added
+
+- `.icon` folder output generation from PNG input — auto-detected when `-o` ends in `.icon`
+- `--dark-bg-color <hex>` CLI flag for iOS 18+ dark mode background color support
+- `createIconComposerFolder()` and `hexToIconColor()` library exports
+- `generate_icon_composer` MCP tool for AI-driven `.icon` folder creation with light/dark mode support
+- When `darkBgColor` is provided, generates `fill-specializations` with light + dark entries; otherwise uses a single `fill`
+
 ## [0.2.1] - 2026-02-27
 
 ### Fixed
