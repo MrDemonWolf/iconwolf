@@ -88,6 +88,7 @@ export const generateIconComposerSchema = z.object({
     .describe(
       'Dark mode background color (hex). When provided, generates fill-specializations with light + dark entries.',
     ),
+  banner: bannerSchema,
 });
 
 export type GenerateIconsInput = z.infer<typeof generateIconsSchema>;

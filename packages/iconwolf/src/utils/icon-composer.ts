@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import sharp from 'sharp';
-import type { GenerationResult } from '../types.js';
+import type { BannerOptions, GenerationResult } from '../types.js';
+import { createBannerSvg, resolveColor } from './banner.js';
 
 const ICON_SIZE = 1024;
 
@@ -356,7 +357,7 @@ export function hexToIconColor(hex: string): string {
 export async function createIconComposerFolder(
   inputPath: string,
   outputPath: string,
-  options: { bgColor: string; darkBgColor?: string },
+  options: { bgColor: string; darkBgColor?: string; banner?: BannerOptions },
 ): Promise<GenerationResult> {
   const assetsDir = path.join(outputPath, 'Assets');
   fs.mkdirSync(assetsDir, { recursive: true });
@@ -368,18 +369,50 @@ export async function createIconComposerFolder(
   // Build icon.json manifest
   const lightColor = hexToIconColor(options.bgColor);
 
-  const group = {
-    layers: [
-      {
-        'image-name': 'foreground.png',
-        name: 'foreground',
-        position: {
-          scale: 1.0,
-          'translation-in-points': [0, 0] as [number, number],
-        },
+  const layers: Array<{
+    'image-name': string;
+    name: string;
+    position: {
+      scale: number;
+      'translation-in-points': [number, number];
+    };
+  }> = [
+    {
+      'image-name': 'foreground.png',
+      name: 'foreground',
+      position: {
+        scale: 1.0,
+        'translation-in-points': [0, 0],
       },
-    ],
-  };
+    },
+  ];
+
+  // Generate banner layer if requested
+  let bannerSize = 0;
+  if (options.banner) {
+    const bannerColor = resolveColor(options.banner.text, options.banner.color);
+    const position = options.banner.position ?? 'top-left';
+    const svg = createBannerSvg(
+      ICON_SIZE,
+      options.banner.text,
+      bannerColor,
+      position,
+    );
+    const bannerDest = path.join(assetsDir, 'banner.png');
+    await sharp(Buffer.from(svg)).png().toFile(bannerDest);
+    bannerSize = fs.statSync(bannerDest).size;
+
+    layers.push({
+      'image-name': 'banner.png',
+      name: 'banner',
+      position: {
+        scale: 1.0,
+        'translation-in-points': [0, 0],
+      },
+    });
+  }
+
+  const group = { layers };
 
   let manifest: Record<string, unknown>;
 
@@ -412,6 +445,6 @@ export async function createIconComposerFolder(
     filePath: outputPath,
     width: ICON_SIZE,
     height: ICON_SIZE,
-    size: foregroundSize + manifestSize,
+    size: foregroundSize + manifestSize + bannerSize,
   };
 }

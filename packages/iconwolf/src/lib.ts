@@ -7,6 +7,7 @@ export { validateSourceImage } from './utils/image.js';
 export {
   applyBanner,
   createBannerSvg,
+  resolveColor,
   shouldApplyBanner,
 } from './utils/banner.js';
 export {

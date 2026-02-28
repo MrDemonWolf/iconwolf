@@ -27,6 +27,7 @@ export async function handleGenerateIconComposer(
     const result = await createIconComposerFolder(inputPath, outputDir, {
       bgColor: input.bg_color,
       darkBgColor: input.dark_bg_color,
+      banner: input.banner,
     });
 
     // Read the foreground image as base64 for the response

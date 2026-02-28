@@ -16,7 +16,7 @@ const DEFAULT_COLORS: Record<string, string> = {
 
 const FALLBACK_COLOR = '#F44336';
 
-function resolveColor(text: string, color?: string): string {
+export function resolveColor(text: string, color?: string): string {
   if (color) return color;
   return DEFAULT_COLORS[text.toUpperCase()] ?? FALLBACK_COLOR;
 }

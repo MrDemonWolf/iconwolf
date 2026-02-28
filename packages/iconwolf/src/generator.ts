@@ -66,6 +66,7 @@ export async function generate(
     const result = await createIconComposerFolder(resolvedInput, outputDir, {
       bgColor,
       darkBgColor: options.darkBgColor,
+      banner: options.banner,
     });
     if (!silent) logger.generated(result);
     if (!silent) logger.summary([result]);

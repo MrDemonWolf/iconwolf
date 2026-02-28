@@ -358,6 +358,78 @@ describe('createIconComposerFolder', () => {
     expect(meta.height).toBe(512);
   });
 
+  it('adds banner layer when banner option provided', async () => {
+    const testPng = path.join(tmpDir, 'banner-test.png');
+    await sharp({
+      create: {
+        width: 1024,
+        height: 1024,
+        channels: 4,
+        background: { r: 255, g: 0, b: 0, alpha: 255 },
+      },
+    })
+      .png()
+      .toFile(testPng);
+
+    const outputPath = path.join(tmpDir, 'BannerTest.icon');
+    const result = await createIconComposerFolder(testPng, outputPath, {
+      bgColor: '#FF0000',
+      banner: { text: 'DEV' },
+    });
+
+    // banner.png should exist in Assets/
+    expect(fs.existsSync(path.join(outputPath, 'Assets', 'banner.png'))).toBe(
+      true,
+    );
+
+    // icon.json should have 2 layers
+    const manifest = JSON.parse(
+      fs.readFileSync(path.join(outputPath, 'icon.json'), 'utf-8'),
+    );
+    expect(manifest.groups[0].layers).toHaveLength(2);
+    expect(manifest.groups[0].layers[1].name).toBe('banner');
+    expect(manifest.groups[0].layers[1]['image-name']).toBe('banner.png');
+    expect(manifest.groups[0].layers[1].position.scale).toBe(1.0);
+    expect(
+      manifest.groups[0].layers[1].position['translation-in-points'],
+    ).toEqual([0, 0]);
+
+    // Size should include banner.png
+    const bannerSize = fs.statSync(
+      path.join(outputPath, 'Assets', 'banner.png'),
+    ).size;
+    expect(bannerSize).toBeGreaterThan(0);
+    expect(result.size).toBeGreaterThan(0);
+  });
+
+  it('does not add banner layer when banner option not provided', async () => {
+    const testPng = path.join(tmpDir, 'no-banner-test.png');
+    await sharp({
+      create: {
+        width: 1024,
+        height: 1024,
+        channels: 4,
+        background: { r: 255, g: 0, b: 0, alpha: 255 },
+      },
+    })
+      .png()
+      .toFile(testPng);
+
+    const outputPath = path.join(tmpDir, 'NoBannerTest.icon');
+    await createIconComposerFolder(testPng, outputPath, {
+      bgColor: '#FF0000',
+    });
+
+    expect(fs.existsSync(path.join(outputPath, 'Assets', 'banner.png'))).toBe(
+      false,
+    );
+
+    const manifest = JSON.parse(
+      fs.readFileSync(path.join(outputPath, 'icon.json'), 'utf-8'),
+    );
+    expect(manifest.groups[0].layers).toHaveLength(1);
+  });
+
   it('round-trips: created folder renders via renderIconComposerFolder()', async () => {
     const testPng = path.join(tmpDir, 'roundtrip-src.png');
     await sharp({

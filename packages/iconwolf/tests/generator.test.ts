@@ -420,6 +420,28 @@ describe('generate', () => {
     expect(fs.existsSync(path.join(outDir, 'favicon.png'))).toBe(false);
   });
 
+  it('generates .icon folder with banner layer when banner provided', async () => {
+    const outDir = path.join(tmpDir, 'BannerOutput.icon');
+
+    const results = await generate({
+      inputPath: testPng,
+      outputDir: outDir,
+      variants: { android: false, favicon: false, splash: false, icon: false },
+      bgColor: '#091533',
+      banner: { text: 'DEV' },
+      silent: true,
+    });
+
+    expect(results).toHaveLength(1);
+    expect(fs.existsSync(path.join(outDir, 'Assets', 'banner.png'))).toBe(true);
+
+    const manifest = JSON.parse(
+      fs.readFileSync(path.join(outDir, 'icon.json'), 'utf-8'),
+    );
+    expect(manifest.groups[0].layers).toHaveLength(2);
+    expect(manifest.groups[0].layers[1].name).toBe('banner');
+  });
+
   it('generates .icon folder with dark mode when darkBgColor provided', async () => {
     const outDir = path.join(tmpDir, 'DarkMode.icon');
 

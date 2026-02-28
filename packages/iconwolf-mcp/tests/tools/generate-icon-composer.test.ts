@@ -67,6 +67,28 @@ describe('handleGenerateIconComposer', () => {
     expect(fs.existsSync(outputDir)).toBe(true);
   });
 
+  it('generates .icon folder with banner layer', async () => {
+    const tmpDir = createTmpDir();
+    dirsToClean.push(tmpDir);
+    const inputPath = await createTestPng(1024, 1024, tmpDir);
+    const outputDir = tmpDir + '/BannerIcon.icon';
+
+    const result = await handleGenerateIconComposer({
+      file_path: inputPath,
+      output_dir: outputDir,
+      bg_color: '#FF0000',
+      banner: { text: 'BETA' },
+    });
+
+    const metadata = JSON.parse(
+      (result.content[0] as { type: 'text'; text: string }).text,
+    );
+    expect(metadata.success).toBe(true);
+    expect(metadata.manifest.groups[0].layers).toHaveLength(2);
+    expect(metadata.manifest.groups[0].layers[1].name).toBe('banner');
+    expect(fs.existsSync(outputDir + '/Assets/banner.png')).toBe(true);
+  });
+
   it('generates fill-specializations with dark_bg_color', async () => {
     const tmpDir = createTmpDir();
     dirsToClean.push(tmpDir);
