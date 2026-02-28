@@ -27,7 +27,7 @@ export async function handleGenerateSplash(input: GenerateSingleInput) {
   try {
     if (isIconComposerFolder(resolvedInput)) {
       const composed = await renderIconComposerFolder(resolvedInput);
-      resolvedInput = composed.composedImagePath;
+      resolvedInput = composed.foregroundImagePath;
       composerCleanup = path.dirname(composed.composedImagePath);
     }
 

@@ -38,6 +38,7 @@ interface IconComposerManifest {
 
 export interface IconComposerResult {
   composedImagePath: string;
+  foregroundImagePath: string;
   extractedBgColor: string;
 }
 
@@ -267,7 +268,7 @@ export async function renderIconComposerFolder(
     }
   }
 
-  // Compose final image
+  // Compose final image (with background)
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'iconwolf-compose-'));
   const composedPath = path.join(tmpDir, 'composed-icon.png');
 
@@ -276,8 +277,28 @@ export async function renderIconComposerFolder(
     .png()
     .toFile(composedPath);
 
+  // Compose foreground-only image (transparent background) for splash
+  const foregroundPath = path.join(tmpDir, 'foreground-icon.png');
+
+  const transparentBg = await sharp({
+    create: {
+      width: ICON_SIZE,
+      height: ICON_SIZE,
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    },
+  })
+    .png()
+    .toBuffer();
+
+  await sharp(transparentBg)
+    .composite(compositeOps)
+    .png()
+    .toFile(foregroundPath);
+
   return {
     composedImagePath: composedPath,
+    foregroundImagePath: foregroundPath,
     extractedBgColor,
   };
 }

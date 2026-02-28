@@ -16,6 +16,7 @@ import type { GeneratorOptions, GenerationResult } from './types.js';
 
 interface ResolvedInput {
   inputPath: string;
+  foregroundPath?: string;
   cleanupPath?: string;
   bgColor: string;
 }
@@ -29,6 +30,7 @@ async function resolveInput(
     if (!silent) logger.info(`Apple Icon Composer file: ${resolvedPath}`);
     const result = await renderIconComposerFolder(resolvedPath);
     const inputPath = result.composedImagePath;
+    const foregroundPath = result.foregroundImagePath;
     const cleanupPath = path.dirname(result.composedImagePath);
 
     if (bgColor === '#FFFFFF') {
@@ -36,7 +38,7 @@ async function resolveInput(
       if (!silent) logger.info(`Extracted background color: ${bgColor}`);
     }
 
-    return { inputPath, cleanupPath, bgColor };
+    return { inputPath, foregroundPath, cleanupPath, bgColor };
   }
 
   return { inputPath: resolvedPath, bgColor };
@@ -59,6 +61,7 @@ export async function generate(
   }
 
   let inputPath: string;
+  let foregroundPath: string | undefined;
   let cleanupPath: string | undefined;
   let splashPath: string | undefined;
   let splashCleanupPath: string | undefined;
@@ -67,6 +70,7 @@ export async function generate(
     // Resolve main input (Apple Icon Composer .icon folder or PNG)
     const mainInput = await resolveInput(resolvedInput, bgColor, silent);
     inputPath = mainInput.inputPath;
+    foregroundPath = mainInput.foregroundPath;
     cleanupPath = mainInput.cleanupPath;
     bgColor = mainInput.bgColor;
 
@@ -81,7 +85,7 @@ export async function generate(
         bgColor,
         silent,
       );
-      splashPath = splashInput.inputPath;
+      splashPath = splashInput.foregroundPath ?? splashInput.inputPath;
       splashCleanupPath = splashInput.cleanupPath;
     }
 
@@ -142,7 +146,7 @@ export async function generate(
 
     if (generateAll || variants.splash) {
       const result = await generateSplashIcon(
-        splashPath || inputPath,
+        splashPath || foregroundPath || inputPath,
         outputDir,
       );
       results.push(result);
