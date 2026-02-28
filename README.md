@@ -54,13 +54,13 @@ brew install iconwolf
 ### Install via npm
 
 ```bash
-npm install -g iconwolf
+npm install -g @mrdemonwolf/iconwolf
 ```
 
 Or use it directly with npx:
 
 ```bash
-npx iconwolf <input-icon>
+npx @mrdemonwolf/iconwolf <input-icon>
 ```
 
 ## Usage
@@ -136,6 +136,39 @@ With `--android` flag, also generates:
 | `android-icon-background.png`  | 1024x1024  | Android adaptive icon background       |
 | `monochrome-icon.png`          | 1024x1024  | Android 13+ themed icon (grayscale)    |
 
+## MCP Server (AI Integration)
+
+iconwolf includes an MCP server that lets AI assistants like Claude
+generate icons directly through conversation.
+
+### Quick Setup (Claude Code)
+
+```bash
+claude mcp add --scope user --transport stdio iconwolf -- npx @mrdemonwolf/iconwolf-mcp
+```
+
+### Manual Setup
+
+Add to your MCP client settings (Claude Code, Claude Desktop, etc.):
+
+```json
+{
+  "mcpServers": {
+    "iconwolf": {
+      "command": "npx",
+      "args": ["@mrdemonwolf/iconwolf-mcp"]
+    }
+  }
+}
+```
+
+Once configured, just ask your AI assistant things like:
+- "Generate all app icon variants from ./AppIcon.icon"
+- "Create a favicon from ./logo.png"
+- "Generate Android adaptive icons with a blue background"
+
+See the [@mrdemonwolf/iconwolf-mcp](https://www.npmjs.com/package/@mrdemonwolf/iconwolf-mcp) package for full documentation.
+
 ## Tech Stack
 
 | Layer            | Technology  |
@@ -204,32 +237,29 @@ pnpm run build
 
 ```
 iconwolf/
-├── src/
-│   ├── index.ts            # CLI entry point (Commander)
-│   ├── generator.ts        # Icon generation orchestrator
-│   ├── types.ts            # Shared TypeScript interfaces
-│   ├── utils/
-│   │   ├── icon-composer.ts # Apple Icon Composer parser
-│   │   ├── image.ts        # Sharp image processing
-│   │   ├── paths.ts        # Output path resolution
-│   │   ├── logger.ts       # Console output formatting
-│   │   └── update-notifier.ts # GitHub Releases update check
-│   └── variants/
-│       ├── android.ts      # Android adaptive icons
-│       ├── favicon.ts      # Web favicon generation
-│       ├── splash.ts       # Splash screen icon
-│       └── standard.ts     # Standard icon generation
-├── tests/                  # Vitest test suite
-├── scripts/
-│   └── build-release.sh    # Release build script
+├── packages/
+│   ├── iconwolf/              # Core CLI package (@mrdemonwolf/iconwolf)
+│   │   ├── src/
+│   │   │   ├── index.ts       # CLI entry point (Commander)
+│   │   │   ├── generator.ts   # Icon generation orchestrator
+│   │   │   ├── lib.ts         # Public API exports
+│   │   │   ├── types.ts       # Shared TypeScript interfaces
+│   │   │   ├── utils/         # Image processing, paths, logging
+│   │   │   └── variants/      # Icon variant generators
+│   │   └── tests/             # Vitest test suite
+│   └── iconwolf-mcp/          # MCP server (@mrdemonwolf/iconwolf-mcp)
+│       ├── src/
+│       │   ├── index.ts       # MCP server entry (stdio transport)
+│       │   ├── tools/         # Tool handlers (5 tools)
+│       │   └── utils/         # I/O helpers, Zod schemas
+│       └── tests/             # MCP tool tests
 ├── Formula/
-│   └── iconwolf.rb         # Homebrew formula
-├── .github/workflows/      # CI: lint, test, build, Homebrew
-├── package.json
-├── tsconfig.json
-├── CLAUDE.md               # AI assistant context
-├── CHANGELOG.md            # Release changelog
-└── LICENSE                 # MIT License
+│   └── iconwolf.rb            # Homebrew formula
+├── .github/workflows/         # CI: lint, test, build, publish
+├── pnpm-workspace.yaml        # pnpm monorepo config
+├── CLAUDE.md                  # AI assistant context
+├── CHANGELOG.md               # Release changelog
+└── LICENSE                    # MIT License
 ```
 
 ## License
