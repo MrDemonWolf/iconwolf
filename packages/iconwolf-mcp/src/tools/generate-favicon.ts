@@ -3,7 +3,7 @@ import {
   validateSourceImage,
   isIconComposerFolder,
   renderIconComposerFolder,
-} from 'iconwolf';
+} from '@mrdemonwolf/iconwolf';
 import {
   resolveInputPath,
   readFileAsBase64,

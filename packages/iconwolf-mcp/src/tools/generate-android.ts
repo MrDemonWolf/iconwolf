@@ -3,8 +3,8 @@ import {
   validateSourceImage,
   isIconComposerFolder,
   renderIconComposerFolder,
-} from 'iconwolf';
-import type { GenerationResult } from 'iconwolf';
+} from '@mrdemonwolf/iconwolf';
+import type { GenerationResult } from '@mrdemonwolf/iconwolf';
 import {
   resolveInputPath,
   readFileAsBase64,

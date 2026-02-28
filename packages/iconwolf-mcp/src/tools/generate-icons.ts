@@ -1,5 +1,5 @@
-import { generate } from 'iconwolf';
-import type { GenerationResult } from 'iconwolf';
+import { generate } from '@mrdemonwolf/iconwolf';
+import type { GenerationResult } from '@mrdemonwolf/iconwolf';
 import {
   resolveInputPath,
   readFileAsBase64,

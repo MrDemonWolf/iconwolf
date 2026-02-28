@@ -1,6 +1,6 @@
 {
   "name": "@mrdemonwolf/iconwolf-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server for AI-driven app icon generation using iconwolf",
   "type": "module",
   "main": "./dist/index.js",
@@ -26,7 +26,7 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
-    "iconwolf": "workspace:*",
+    "@mrdemonwolf/iconwolf": "workspace:*",
     "zod": "^3.25.36"
   },
   "devDependencies": {
