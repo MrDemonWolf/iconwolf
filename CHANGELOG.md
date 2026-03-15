@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Self-hostable web GUI (`apps/web/`) for uploading images, configuring variants, previewing results, and downloading generated icons
+  - Hono backend with `/api/generate`, `/api/preview`, `/api/download`, `/api/health` endpoints
+  - React frontend with Tailwind CSS and shadcn/ui blue theme (light/dark mode)
+  - Drag-and-drop PNG and `.icon` ZIP upload with preview
+  - Variant selection, background color picker, and diagonal banner configuration
+  - ZIP download of all generated icons
+  - Docker support for Coolify/self-hosted deployment
+
+### Changed
+
+- Migrated from pnpm to Bun as package manager
+- Added Turborepo for monorepo task orchestration
+- Restructured monorepo to `packages/*` + `apps/*` layout
+- Updated CI workflows to use Bun with Node 22 LTS
+- Simplified CI test matrix to Node 22 (from 18/20/22)
+
 ## [0.3.0] - 2026-02-27
 
 ### Added
