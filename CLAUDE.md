@@ -157,4 +157,11 @@ Docker:
 - **Update notifier**: On each `generate()` run, reads a cached version check from `~/.iconwolf/update-check.json` (sync, zero latency). Fires a background fetch to GitHub Releases API if the cache is stale (>24h). Shows a notice after successful generation if a newer version exists. All errors are silently swallowed.
 - Releasing: bump version in `package.json` (both packages) + `src/index.ts` (the `VERSION` constant) + `Formula/iconwolf.rb`, update `CHANGELOG.md`, push, create a GitHub release. CI handles building, updating the tap, and publishing to npm.
 - Local release build: `cd packages/iconwolf && bash scripts/build-release.sh macos-arm64` then `gh release upload <tag> dist-bin/iconwolf-macos-arm64.tar.gz`
-- **Coolify deployment**: Point to repo, set Dockerfile path to `apps/web/Dockerfile`, expose port 3000, health check `GET /api/health`.
+- **Coolify deployment** (step-by-step):
+  1. In Coolify dashboard, create a new Resource → select your GitHub repo
+  2. Set Build Pack to "Dockerfile"
+  3. Set Dockerfile Location to `apps/web/Dockerfile`
+  4. Set port to `3000`
+  5. Add health check: `GET /api/health` on port 3000
+  6. Deploy — Coolify auto-builds and deploys on every push to main
+  No `ship` command needed — Coolify watches the repo and auto-deploys.
