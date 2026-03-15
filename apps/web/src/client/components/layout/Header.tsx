@@ -6,9 +6,14 @@ export function Header() {
   return (
     <header className="border-b border-border">
       <div className="container mx-auto px-4 py-4 max-w-4xl flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">iconwolf</h1>
-          <p className="text-sm text-muted-foreground">App icon generator for Expo & React Native</p>
+        <div className="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-primary flex-shrink-0">
+            <path d="M2 2 L7 9 L5 14 L9 19 L12 22 L15 19 L19 14 L17 9 L22 2 L17 7 L12 8 L7 7 Z"/>
+          </svg>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">iconwolf</h1>
+            <p className="text-sm text-muted-foreground">App icon generator for Expo & React Native</p>
+          </div>
         </div>
         <button
           onClick={toggleTheme}
