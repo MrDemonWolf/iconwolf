@@ -4,23 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-03-15
+
 ### Added
 
-- Self-hostable web GUI (`apps/web/`) for uploading images, configuring variants, previewing results, and downloading generated icons
-  - Hono backend with `/api/generate`, `/api/preview`, `/api/download`, `/api/health` endpoints
-  - React frontend with Tailwind CSS and shadcn/ui blue theme (light/dark mode)
-  - Drag-and-drop PNG and `.icon` ZIP upload with preview
-  - Variant selection, background color picker, and diagonal banner configuration
-  - ZIP download of all generated icons
-  - Docker support for Coolify/self-hosted deployment
+- MCP `generate_icons` tool now accepts `dark_bg_color` — propagated as `darkBgColor` to `generate()` for iOS 18+ dark/tinted Android variants (previously only `generate_icon_composer` supported this)
 
 ### Changed
 
-- Migrated from pnpm to Bun as package manager
-- Added Turborepo for monorepo task orchestration
-- Restructured monorepo to `packages/*` + `apps/*` layout
-- Updated CI workflows to use Bun with Node 22 LTS
-- Simplified CI test matrix to Node 22 (from 18/20/22)
+- Rewrote all CLI option descriptions to be clearer for both developers and non-developers
+- Rewrote all MCP tool descriptions and schema field descriptions with the same clarity improvements
 
 ## [0.3.0] - 2026-02-27
 

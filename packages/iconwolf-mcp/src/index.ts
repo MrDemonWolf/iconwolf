@@ -49,7 +49,7 @@ function validateInput(input: { file_path?: string; base64_image?: string }) {
 
 server.tool(
   'generate_icons',
-  'Generate all icon variants (icon, favicon, splash, Android adaptive) from a single source image. Mirrors the iconwolf CLI default behavior.',
+  'Generate all icon variants at once from a single source image: 1024×1024 app icon, 48×48 web favicon, 1024×1024 splash screen, and Android adaptive icon. Use this when you want everything in one call.',
   generateIconsSchema.shape,
   async (input) => {
     try {
@@ -63,7 +63,7 @@ server.tool(
 
 server.tool(
   'generate_icon',
-  'Generate a standard 1024x1024 icon.png from a source image.',
+  'Generate a 1024×1024 app icon (icon.png) from a source image.',
   generateSingleSchema.shape,
   async (input) => {
     try {
@@ -77,7 +77,7 @@ server.tool(
 
 server.tool(
   'generate_favicon',
-  'Generate a 48x48 favicon.png with rounded corners from a source image.',
+  'Generate a 48×48 web favicon (favicon.png) with Apple-style rounded corners from a source image.',
   generateSingleSchema.shape,
   async (input) => {
     try {
@@ -91,7 +91,7 @@ server.tool(
 
 server.tool(
   'generate_splash',
-  'Generate a 1024x1024 splash-icon.png from a source image.',
+  'Generate a 1024×1024 splash screen icon (splash-icon.png) from a source image.',
   generateSingleSchema.shape,
   async (input) => {
     try {
@@ -105,7 +105,7 @@ server.tool(
 
 server.tool(
   'generate_android_icons',
-  'Generate Android adaptive icon variants (foreground, background, monochrome) from a source image.',
+  'Generate Android adaptive icon layers from a source image: the foreground (your icon scaled to the safe zone), an optional solid background color layer, and an optional monochrome (silhouette) variant.',
   generateAndroidSchema.shape,
   async (input) => {
     try {
@@ -119,7 +119,7 @@ server.tool(
 
 server.tool(
   'generate_icon_composer',
-  'Generate an Apple Icon Composer .icon folder from a source PNG. Supports light and dark mode background colors for iOS 18+ dark/tinted icon variants.',
+  'Generate an Apple Icon Composer .icon folder from a source PNG. Supports separate light and dark mode backgrounds to produce iOS 18+ dark and tinted icon variants.',
   generateIconComposerSchema.shape,
   async (input) => {
     try {

@@ -10,46 +10,56 @@ import {
 } from './utils/update-notifier.js';
 import type { BannerPosition, GeneratorOptions } from './types.js';
 
-const VERSION = '0.3.0';
+const VERSION = '0.4.0';
 
 const program = new Command();
 
 program
   .name('iconwolf')
   .description(
-    'Generate all necessary icon variants for cross-platform Expo/React Native projects from a single source icon.',
+    'Turn a single image into every icon your app needs — app icon, splash screen, Android adaptive icon, and web favicon.',
   )
   .version(VERSION)
   .argument(
     '<input>',
-    'Path to an Apple Icon Composer .icon folder or a source PNG',
+    'Your source image — a PNG file or an Apple Icon Composer .icon folder',
   )
-  .option('-o, --output <dir>', 'Output directory', resolveDefaultOutputDir())
-  .option('--android', 'Generate Android adaptive icon variants only')
-  .option('--favicon', 'Generate web favicon only')
-  .option('--splash', 'Generate splash screen icon only')
-  .option('--icon', 'Generate standard icon.png only')
+  .option(
+    '-o, --output <dir>',
+    'Where to save the generated icons (defaults to src/assets/images/ or assets/images/)',
+    resolveDefaultOutputDir(),
+  )
+  .option(
+    '--android',
+    'Generate only Android adaptive icons (foreground, background, and monochrome layers)',
+  )
+  .option('--favicon', 'Generate only the web favicon (48×48 PNG with rounded corners)')
+  .option('--splash', 'Generate only the splash screen icon (1024×1024 PNG)')
+  .option('--icon', 'Generate only the app icon (1024×1024 PNG)')
   .option(
     '--splash-input <path>',
-    'Use a separate image for the splash screen icon',
+    'Use a different image for the splash screen (PNG or .icon folder)',
   )
   .option(
     '--bg-color <hex>',
-    'Background color for Android adaptive icon',
+    'Background fill color for the Android adaptive icon (hex, e.g. #FFFFFF)',
     '#FFFFFF',
   )
   .option(
     '--dark-bg-color <hex>',
-    'Dark mode background color for .icon folder output',
+    'Background fill color for dark mode (hex) — used for .icon folder output and Android dark variants',
   )
   .option(
     '--banner <text>',
-    'Diagonal ribbon banner text (e.g. DEV, BETA, STAGING)',
+    'Add a diagonal ribbon banner to your icon (e.g. DEV, BETA, STAGING)',
   )
-  .option('--banner-color <hex>', 'Ribbon color (default: auto from text)')
+  .option(
+    '--banner-color <hex>',
+    'Banner ribbon color (hex, e.g. #FF0000) — auto-generated from the banner text if not set',
+  )
   .option(
     '--banner-position <pos>',
-    'Banner position: top-left, top-right, bottom-left, bottom-right',
+    'Corner to place the banner (top-left, top-right, bottom-left, bottom-right)',
     'top-left',
   )
   .action(async (input: string, opts) => {

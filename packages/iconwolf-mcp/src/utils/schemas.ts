@@ -2,34 +2,64 @@ import { z } from 'zod';
 
 const bannerSchema = z
   .object({
-    text: z.string().describe('Banner text (e.g. DEV, BETA, STAGING)'),
+    text: z
+      .string()
+      .describe(
+        'Text to display on the diagonal ribbon banner (e.g. DEV, BETA, STAGING)',
+      ),
     color: z
       .string()
       .optional()
-      .describe('Ribbon color hex (default: auto from text)'),
+      .describe(
+        'Ribbon color as a hex value (e.g. #FF0000) — auto-generated from the text if not set',
+      ),
     position: z
       .enum(['top-left', 'top-right', 'bottom-left', 'bottom-right'])
       .optional()
-      .describe('Banner corner position (default: top-left)'),
+      .describe(
+        'Corner to place the ribbon banner (top-left, top-right, bottom-left, bottom-right; default: top-left)',
+      ),
   })
   .optional()
-  .describe('Diagonal ribbon banner overlay');
+  .describe(
+    'Optional diagonal ribbon banner to overlay on the icon (e.g. for DEV or BETA builds)',
+  );
 
 export const generateIconsSchema = z.object({
   file_path: z
     .string()
     .optional()
-    .describe('Absolute path to a local PNG file or .icon folder'),
-  base64_image: z.string().optional().describe('Base64-encoded PNG image data'),
-  output_dir: z.string().optional().describe('Output directory path'),
+    .describe(
+      'Absolute path to the source image — a PNG file or an Apple Icon Composer .icon folder',
+    ),
+  base64_image: z
+    .string()
+    .optional()
+    .describe(
+      "The source image as a base64-encoded PNG string (use this when you don't have a file path)",
+    ),
+  output_dir: z
+    .string()
+    .optional()
+    .describe('Directory where the generated icon files will be saved'),
   bg_color: z
     .string()
     .default('#FFFFFF')
-    .describe('Background color for Android adaptive icon (hex)'),
+    .describe(
+      'Background fill color for the Android adaptive icon (hex, e.g. #FFFFFF)',
+    ),
+  dark_bg_color: z
+    .string()
+    .optional()
+    .describe(
+      'Background fill color for dark mode (hex) — applies to .icon folder output and Android dark variants (iOS 18+ dark/tinted icons)',
+    ),
   splash_input_path: z
     .string()
     .optional()
-    .describe('Separate image path for splash screen (PNG or .icon folder)'),
+    .describe(
+      'Path to a different source image to use for the splash screen (PNG or .icon folder) — uses the main image if not set',
+    ),
   variants: z
     .object({
       icon: z.boolean().default(false),
@@ -39,7 +69,7 @@ export const generateIconsSchema = z.object({
     })
     .optional()
     .describe(
-      'Which variants to generate. If omitted, generates all default variants.',
+      'Which icon types to generate. Leave empty to generate all four defaults (icon, favicon, splash, Android).',
     ),
   banner: bannerSchema,
 });
@@ -48,9 +78,19 @@ export const generateSingleSchema = z.object({
   file_path: z
     .string()
     .optional()
-    .describe('Absolute path to a local PNG file or .icon folder'),
-  base64_image: z.string().optional().describe('Base64-encoded PNG image data'),
-  output_dir: z.string().optional().describe('Output directory path'),
+    .describe(
+      'Absolute path to the source image — a PNG file or an Apple Icon Composer .icon folder',
+    ),
+  base64_image: z
+    .string()
+    .optional()
+    .describe(
+      "The source image as a base64-encoded PNG string (use this when you don't have a file path)",
+    ),
+  output_dir: z
+    .string()
+    .optional()
+    .describe('Directory where the generated icon files will be saved'),
   banner: bannerSchema,
 });
 
@@ -58,17 +98,31 @@ export const generateAndroidSchema = z.object({
   file_path: z
     .string()
     .optional()
-    .describe('Absolute path to a local PNG file or .icon folder'),
-  base64_image: z.string().optional().describe('Base64-encoded PNG image data'),
-  output_dir: z.string().optional().describe('Output directory path'),
+    .describe(
+      'Absolute path to the source image — a PNG file or an Apple Icon Composer .icon folder',
+    ),
+  base64_image: z
+    .string()
+    .optional()
+    .describe(
+      "The source image as a base64-encoded PNG string (use this when you don't have a file path)",
+    ),
+  output_dir: z
+    .string()
+    .optional()
+    .describe('Directory where the generated icon files will be saved'),
   bg_color: z
     .string()
     .default('#FFFFFF')
-    .describe('Background color for adaptive icon (hex)'),
+    .describe(
+      'Background fill color for the Android adaptive icon (hex, e.g. #FFFFFF)',
+    ),
   include_background: z
     .boolean()
     .default(true)
-    .describe('Include background and monochrome variants'),
+    .describe(
+      'Also generate the background color layer and monochrome (silhouette) variant alongside the foreground',
+    ),
   banner: bannerSchema,
 });
 
@@ -76,17 +130,29 @@ export const generateIconComposerSchema = z.object({
   file_path: z
     .string()
     .optional()
-    .describe('Absolute path to a local PNG file'),
-  base64_image: z.string().optional().describe('Base64-encoded PNG image data'),
+    .describe(
+      'Absolute path to the source image — a PNG file or an Apple Icon Composer .icon folder',
+    ),
+  base64_image: z
+    .string()
+    .optional()
+    .describe(
+      "The source image as a base64-encoded PNG string (use this when you don't have a file path)",
+    ),
   output_dir: z
     .string()
-    .describe('Output path ending in .icon (e.g. AppIcon.icon)'),
-  bg_color: z.string().default('#FFFFFF').describe('Background color (hex)'),
+    .describe(
+      'Output path for the .icon folder — must end with .icon (e.g. /path/to/AppIcon.icon)',
+    ),
+  bg_color: z
+    .string()
+    .default('#FFFFFF')
+    .describe('Light mode background fill color (hex, e.g. #FFFFFF)'),
   dark_bg_color: z
     .string()
     .optional()
     .describe(
-      'Dark mode background color (hex). When provided, generates fill-specializations with light + dark entries.',
+      'Dark mode background fill color (hex). When provided, the .icon folder will include separate light and dark icon variants (iOS 18+).',
     ),
   banner: bannerSchema,
 });
