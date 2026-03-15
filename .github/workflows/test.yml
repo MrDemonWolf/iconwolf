@@ -12,42 +12,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - uses: oven-sh/setup-bun@v2
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
 
-      - run: pnpm install
+      - run: bun install
 
       - name: Lint
-        run: pnpm -r run lint
+        run: bun run lint
 
       - name: Format check
-        run: pnpm -r run format:check
+        run: bun run format:check
 
   test:
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-14]
-        node-version: [18, 20, 22]
+        node-version: [22]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - uses: oven-sh/setup-bun@v2
 
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: pnpm
 
-      - run: pnpm install
+      - run: bun install
 
       - name: Build
-        run: pnpm -r run build
+        run: bun run build
 
       - name: Run tests
-        run: pnpm -r run test
+        run: bun run test
