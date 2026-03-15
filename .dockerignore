@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-bin
+.git
+.github
+.turbo
+.claude
+.DS_Store
+*.md
+*.tgz
