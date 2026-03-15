@@ -13,11 +13,11 @@ mkdir -p "$STAGING/lib"
 
 # Step 1: Compile TypeScript
 echo "  Compiling TypeScript..."
-pnpm run build
+bun run build
 
 # Step 2: Bundle into single CJS file (sharp stays external)
 echo "  Bundling with esbuild..."
-pnpm exec esbuild dist/index.js \
+bunx esbuild dist/index.js \
   --bundle \
   --platform=node \
   --format=cjs \
