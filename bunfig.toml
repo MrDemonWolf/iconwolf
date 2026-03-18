@@ -1,0 +1,4 @@
+[install]
+globalCache = true        # default, but explicit
+linker = "isolated"       # each package gets its own node_modules; only declared deps visible
+autoInstall = false       # no silent installs on import
