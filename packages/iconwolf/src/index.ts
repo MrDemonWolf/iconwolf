@@ -33,7 +33,10 @@ program
     '--android',
     'Generate only Android adaptive icons (foreground, background, and monochrome layers)',
   )
-  .option('--favicon', 'Generate only the web favicon (48×48 PNG with rounded corners)')
+  .option(
+    '--favicon',
+    'Generate only the web favicon (48×48 PNG with rounded corners)',
+  )
   .option('--splash', 'Generate only the splash screen icon (1024×1024 PNG)')
   .option('--icon', 'Generate only the app icon (1024×1024 PNG)')
   .option(

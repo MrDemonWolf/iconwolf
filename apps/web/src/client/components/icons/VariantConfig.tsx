@@ -9,7 +9,11 @@ const VARIANT_INFO = [
   { key: 'icon' as const, label: 'Icon', desc: '1024x1024 icon.png' },
   { key: 'android' as const, label: 'Android', desc: 'Adaptive icon variants' },
   { key: 'favicon' as const, label: 'Favicon', desc: '48x48 favicon.png' },
-  { key: 'splash' as const, label: 'Splash', desc: '1024x1024 splash-icon.png' },
+  {
+    key: 'splash' as const,
+    label: 'Splash',
+    desc: '1024x1024 splash-icon.png',
+  },
 ];
 
 export function VariantConfig({ variants, onChange }: VariantConfigProps) {

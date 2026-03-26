@@ -9,7 +9,10 @@ import { BannerConfig } from './components/icons/BannerConfig';
 import { PreviewGrid } from './components/icons/PreviewGrid';
 import { DownloadBar } from './components/icons/DownloadBar';
 import { useGenerate } from './hooks/useGenerate';
-import type { VariantConfig as VariantConfigType, BannerConfig as BannerConfigType } from './lib/api';
+import type {
+  VariantConfig as VariantConfigType,
+  BannerConfig as BannerConfigType,
+} from './lib/api';
 
 export function App() {
   const [image, setImage] = useState<File | null>(null);
@@ -87,7 +90,10 @@ export function App() {
               </label>
               {showSplash && (
                 <div className="mt-3">
-                  <SplashUpload onFileSelect={setSplashImage} fileName={splashImage?.name} />
+                  <SplashUpload
+                    onFileSelect={setSplashImage}
+                    fileName={splashImage?.name}
+                  />
                 </div>
               )}
             </div>

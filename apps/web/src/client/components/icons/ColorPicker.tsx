@@ -14,7 +14,9 @@ export function ColorPicker({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1.5">Background Color</label>
+        <label className="block text-sm font-medium mb-1.5">
+          Background Color
+        </label>
         <div className="flex gap-2">
           <input
             type="color"
@@ -33,7 +35,9 @@ export function ColorPicker({
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1.5">Dark Background Color</label>
+        <label className="block text-sm font-medium mb-1.5">
+          Dark Background Color
+        </label>
         <div className="flex gap-2">
           <input
             type="color"

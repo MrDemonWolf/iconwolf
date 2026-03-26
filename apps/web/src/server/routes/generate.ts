@@ -1,6 +1,10 @@
 import { Hono } from 'hono';
 import { generate } from '@mrdemonwolf/iconwolf';
-import { createTempDir, saveUploadedFile, resolveInputPath } from '../utils/temp.js';
+import {
+  createTempDir,
+  saveUploadedFile,
+  resolveInputPath,
+} from '../utils/temp.js';
 import { createSession } from '../utils/sessions.js';
 import fs from 'fs/promises';
 import path from 'path';
@@ -31,7 +35,11 @@ generateRoute.post('/generate', async (c) => {
     let splashInputPath: string | undefined;
     const splashFile = formData.get('splashImage') as File | null;
     if (splashFile) {
-      const splashSaved = await saveUploadedFile(splashFile, tempDir, 'splash-');
+      const splashSaved = await saveUploadedFile(
+        splashFile,
+        tempDir,
+        'splash-',
+      );
       splashInputPath = await resolveInputPath(splashSaved, tempDir, 'splash');
     }
 
@@ -57,7 +65,11 @@ generateRoute.post('/generate', async (c) => {
       bgColor: bgColor || '#FFFFFF',
       darkBgColor,
       banner: bannerConfig.text
-        ? { text: bannerConfig.text, color: bannerConfig.color, position: bannerConfig.position }
+        ? {
+            text: bannerConfig.text,
+            color: bannerConfig.color,
+            position: bannerConfig.position,
+          }
         : undefined,
       splashInputPath: splashInputPath,
     });
@@ -73,7 +85,7 @@ generateRoute.post('/generate', async (c) => {
           size: r.size,
           base64: buffer.toString('base64'),
         };
-      })
+      }),
     );
 
     // Store in session
@@ -89,7 +101,8 @@ generateRoute.post('/generate', async (c) => {
     if (tempDir) {
       await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {});
     }
-    const message = error instanceof Error ? error.message : 'Generation failed';
+    const message =
+      error instanceof Error ? error.message : 'Generation failed';
     return c.json({ error: message }, 500);
   }
 });

@@ -27,7 +27,7 @@ export function useGenerate() {
       darkBgColor?: string;
       banner?: BannerConfig;
       splashImage?: File;
-    }
+    },
   ) => {
     setState({ loading: true, error: null, data: null });
     try {

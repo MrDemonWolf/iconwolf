@@ -6,7 +6,11 @@ interface UploadZoneProps {
   fileName?: string;
 }
 
-export function UploadZone({ onFileSelect, preview, fileName }: UploadZoneProps) {
+export function UploadZone({
+  onFileSelect,
+  preview,
+  fileName,
+}: UploadZoneProps) {
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -17,7 +21,7 @@ export function UploadZone({ onFileSelect, preview, fileName }: UploadZoneProps)
       const file = e.dataTransfer.files[0];
       if (file) onFileSelect(file);
     },
-    [onFileSelect]
+    [onFileSelect],
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,7 +31,10 @@ export function UploadZone({ onFileSelect, preview, fileName }: UploadZoneProps)
 
   return (
     <div
-      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setDragOver(true);
+      }}
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
@@ -52,13 +59,32 @@ export function UploadZone({ onFileSelect, preview, fileName }: UploadZoneProps)
             className="w-32 h-32 object-contain rounded-lg"
           />
           <p className="text-sm text-muted-foreground">{fileName}</p>
-          <p className="text-xs text-muted-foreground">Click or drag to replace</p>
+          <p className="text-xs text-muted-foreground">
+            Click or drag to replace
+          </p>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-muted-foreground"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" x2="12" y1="3" y2="15" />
+          </svg>
           <div>
-            <p className="font-medium">Drop your icon here or click to browse</p>
+            <p className="font-medium">
+              Drop your icon here or click to browse
+            </p>
             <p className="text-sm text-muted-foreground mt-1">
               PNG file or .icon folder (as ZIP)
             </p>

@@ -1,6 +1,10 @@
 import { Hono } from 'hono';
 import { generate } from '@mrdemonwolf/iconwolf';
-import { createTempDir, saveUploadedFile, resolveInputPath } from '../utils/temp.js';
+import {
+  createTempDir,
+  saveUploadedFile,
+  resolveInputPath,
+} from '../utils/temp.js';
 import fs from 'fs/promises';
 import path from 'path';
 

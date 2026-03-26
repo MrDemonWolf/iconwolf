@@ -24,9 +24,13 @@ export function SplashUpload({ onFileSelect, fileName }: SplashUploadProps) {
         className="hidden"
       />
       {fileName ? (
-        <p className="text-sm text-muted-foreground">{fileName} (click to replace)</p>
+        <p className="text-sm text-muted-foreground">
+          {fileName} (click to replace)
+        </p>
       ) : (
-        <p className="text-sm text-muted-foreground">Click to select splash image (PNG or .icon ZIP)</p>
+        <p className="text-sm text-muted-foreground">
+          Click to select splash image (PNG or .icon ZIP)
+        </p>
       )}
     </div>
   );
