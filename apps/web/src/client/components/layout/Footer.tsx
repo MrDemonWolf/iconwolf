@@ -10,8 +10,8 @@ export function Footer() {
             className="hover:text-foreground transition-colors"
           >
             iconwolf
-          </a>
-          {' '}&mdash; Open source app icon generator
+          </a>{' '}
+          &mdash; Open source app icon generator
         </p>
       </div>
     </footer>

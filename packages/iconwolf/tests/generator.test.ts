@@ -267,10 +267,12 @@ describe('generate', () => {
     const os = await import('node:os');
     const outDir = path.join(tmpDir, 'icon-cleanup');
 
-    // Count compose dirs before
-    const composeDirsBefore = fs
-      .readdirSync(os.tmpdir())
-      .filter((d) => d.startsWith('iconwolf-compose-'));
+    // Snapshot exact compose dirs before
+    const composeDirsBefore = new Set(
+      fs
+        .readdirSync(os.tmpdir())
+        .filter((d) => d.startsWith('iconwolf-compose-')),
+    );
 
     await generate({
       inputPath: testIconFolder,
@@ -280,12 +282,12 @@ describe('generate', () => {
     });
 
     // No new compose dirs should remain after generation
-    const composeDirsAfter = fs
+    const newComposeDirs = fs
       .readdirSync(os.tmpdir())
-      .filter((d) => d.startsWith('iconwolf-compose-'));
-    expect(composeDirsAfter.length).toBeLessThanOrEqual(
-      composeDirsBefore.length,
-    );
+      .filter(
+        (d) => d.startsWith('iconwolf-compose-') && !composeDirsBefore.has(d),
+      );
+    expect(newComposeDirs.length).toBe(0);
 
     expect(fs.existsSync(path.join(outDir, 'icon.png'))).toBe(true);
   });

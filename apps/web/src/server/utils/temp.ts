@@ -13,7 +13,7 @@ export async function createTempDir(): Promise<string> {
 export async function saveUploadedFile(
   file: File,
   tempDir: string,
-  prefix = ''
+  prefix = '',
 ): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -25,7 +25,7 @@ export async function saveUploadedFile(
 export async function resolveInputPath(
   savedPath: string,
   tempDir: string,
-  subdir = 'icon'
+  subdir = 'icon',
 ): Promise<string> {
   // If it's a ZIP, extract and look for .icon folder
   if (savedPath.endsWith('.zip')) {

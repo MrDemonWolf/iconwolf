@@ -43,7 +43,7 @@ export async function generateIcons(
     darkBgColor?: string;
     banner?: BannerConfig;
     splashImage?: File;
-  }
+  },
 ): Promise<GenerateResponse> {
   const formData = new FormData();
   formData.append('image', image);
@@ -57,11 +57,14 @@ export async function generateIcons(
   if (options.darkBgColor) formData.append('darkBgColor', options.darkBgColor);
 
   if (options.banner?.enabled) {
-    formData.append('banner', JSON.stringify({
-      text: options.banner.text,
-      color: options.banner.color,
-      position: options.banner.position,
-    }));
+    formData.append(
+      'banner',
+      JSON.stringify({
+        text: options.banner.text,
+        color: options.banner.color,
+        position: options.banner.position,
+      }),
+    );
   }
 
   if (options.splashImage) {
@@ -83,7 +86,7 @@ export async function generateIcons(
 
 export async function previewIcon(
   image: File,
-  bgColor?: string
+  bgColor?: string,
 ): Promise<PreviewResponse> {
   const formData = new FormData();
   formData.append('image', image);

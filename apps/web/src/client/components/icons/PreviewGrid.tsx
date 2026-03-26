@@ -60,7 +60,20 @@ export function PreviewGrid({ results }: PreviewGridProps) {
                 onClick={() => setSelectedIndex(null)}
                 className="p-1 hover:bg-accent rounded-lg transition-colors"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
               </button>
             </div>
             <div className="bg-muted rounded-xl p-4 flex items-center justify-center">
@@ -71,7 +84,9 @@ export function PreviewGrid({ results }: PreviewGridProps) {
               />
             </div>
             <div className="mt-3 flex gap-3 text-sm text-muted-foreground">
-              <span>{results[selectedIndex].width}x{results[selectedIndex].height}</span>
+              <span>
+                {results[selectedIndex].width}x{results[selectedIndex].height}
+              </span>
               <span>{formatSize(results[selectedIndex].size)}</span>
             </div>
           </div>

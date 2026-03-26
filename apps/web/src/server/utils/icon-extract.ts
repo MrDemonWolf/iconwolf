@@ -5,7 +5,7 @@ import unzipper from 'unzipper';
 
 export async function extractIconFolder(
   zipPath: string,
-  extractDir: string
+  extractDir: string,
 ): Promise<string> {
   await fs.mkdir(extractDir, { recursive: true });
 
@@ -20,7 +20,7 @@ export async function extractIconFolder(
   const iconFolder = await findIconFolder(extractDir);
   if (!iconFolder) {
     throw new Error(
-      'No .icon folder found in ZIP. Upload a ZIP containing an Apple Icon Composer .icon folder.'
+      'No .icon folder found in ZIP. Upload a ZIP containing an Apple Icon Composer .icon folder.',
     );
   }
 

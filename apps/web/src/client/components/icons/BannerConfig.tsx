@@ -60,7 +60,9 @@ export function BannerConfig({ banner, onChange }: BannerConfigProps) {
             <label className="block text-sm font-medium mb-1.5">Position</label>
             <select
               value={banner.position}
-              onChange={(e) => onChange({ ...banner, position: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...banner, position: e.target.value })
+              }
               className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
             >
               {POSITIONS.map(({ value, label }) => (
